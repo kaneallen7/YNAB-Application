@@ -167,6 +167,23 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 </div>
+<div style="margin:18px 0 0;border-top:1px solid #1E201F;padding-top:12px">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C;margin-bottom:3px">ALL CATEGORIES</div>
+<sc-for list="{{ budgetAllRows }}" as="b" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:1fr 96px 96px 110px;align-items:center;gap:14px;padding:11px 0 10px;border-bottom:1px solid #171918">
+<div>
+<div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ b.name }}</div>
+<div style="margin-top:8px;height:2px;background:#1A1C1B;position:relative">
+<div style="position:absolute;left:0;top:0;bottom:0;width:{{ b.pct }}%;background:{{ b.bar }}"></div>
+<div style="position:absolute;top:-3px;bottom:-3px;left:29%;width:1px;background:#34372F"></div>
+</div>
+</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ b.budgeted }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ b.spent }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ b.remCol }}">{{ b.remaining }}</div>
+</div>
+</sc-for>
+</div>
 <div style="flex:1;min-width:0;padding:22px 26px 26px">
 <div style="font:400 13px/1 'IBM Plex Sans'">Savings rate &amp; runway</div>
 <div style="margin-top:20px;display:flex;align-items:flex-end;gap:5px;height:78px">
@@ -610,8 +627,7 @@ class Component extends DCLogic {
     }));
 
     // ── budget rows
-    const top6 = d.cats.slice().sort((a, b) => b.budgeted - a.budgeted).slice(0, 6);
-    const budgetRows = top6.map(c => {
+    const makeBudgetRow = c => {
       const pct = Math.min(100, c.spent / c.budgeted * 100);
       const rem = c.budgeted - c.spent;
       return {
@@ -619,7 +635,11 @@ class Component extends DCLogic {
         remaining: this.m(rem), remCol: rem < 0 ? '#E8E7E3' : '#5C5E5C',
         pct: pct.toFixed(1), bar: pct > 90 ? '#E8E7E3' : '#454846'
       };
-    });
+    };
+    const preferred = ['Groceries', 'Dining out', 'Clothes', 'Misc'];
+    const top6 = preferred.map(name => d.cats.find(c => c.name === name)).filter(Boolean);
+    const budgetRows = top6.map(makeBudgetRow);
+    const budgetAllRows = d.cats.map(makeBudgetRow);
 
     const srMax = Math.max(...srSeries), srMin = Math.min(...srSeries, 0);
     const srBars = srSeries.map((s, i) => ({

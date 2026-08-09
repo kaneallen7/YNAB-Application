@@ -169,13 +169,16 @@ a:hover{color:#5DBE95}
 </div>
 <div style="flex:1;min-width:0;padding:22px 26px 26px">
 <div style="font:400 13px/1 'IBM Plex Sans'">Savings rate &amp; runway</div>
-<div style="margin-top:20px;display:flex;align-items:flex-end;gap:5px;height:78px">
+<div style="margin-top:20px;display:flex;align-items:flex-start;gap:24px">
+<div style="flex:1;min-width:0">
+<div style="display:flex;align-items:flex-end;gap:5px;height:78px">
 <sc-for list="{{ srBars }}" as="s" hint-placeholder-count="18">
 <div style="flex:1;height:{{ s.h }}%;background:{{ s.c }}"></div>
 </sc-for>
 </div>
 <div style="margin-top:9px;display:flex;justify-content:space-between;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F"><span>MAR 25</span><span>AUG 26</span></div>
-<div style="margin-top:22px;border-top:1px solid #1E201F">
+ </div>
+<div style="flex:1;min-width:0;border-top:1px solid #1E201F">
 <sc-for list="{{ runwayRows }}" as="r" hint-placeholder-count="4">
 <div style="display:flex;align-items:baseline;justify-content:space-between;padding:12px 0;border-bottom:1px solid #171918">
 <span style="font:400 11.5px/1 'IBM Plex Sans';color:#8A8B88">{{ r.k }}</span>

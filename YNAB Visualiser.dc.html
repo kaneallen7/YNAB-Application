@@ -792,7 +792,7 @@ class Component extends DCLogic {
         this.setState({ hover: Math.max(0, Math.min(n - 1, i)) });
       },
       onChartLeave: () => this.setState({ hover: null }),
-      kpis, budgetRows, srBars, srStart, srEnd, runwayRows,
+      kpis, budgetRows, budgetAllRows, srBars, srStart, srEnd, runwayRows,
       spendTotal: this.m(spendTotal), spendPrev: this.m(2384),
       selCat: sel.name, selCatSpent: this.m(sel.spent),
       selCatSub: this.m(sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),

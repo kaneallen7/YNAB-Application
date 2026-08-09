@@ -1,153 +1,783 @@
-# Ledgerlens — YNAB sync
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"><style>
+html,body{margin:0;padding:0;background:#080909;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+a{color:#3FA37A;text-decoration:none}
+a:hover{color:#5DBE95}
+::selection{background:#3FA37A;color:#080909}
+</style></helmet>
+<div style="min-height:100vh;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
 
-Pull your YNAB budget over the API and regenerate the Ledgerlens dashboard on
-your **live numbers**. Run it whenever you want fresh figures — no manual CSV
-exports.
+<div style="display:flex;align-items:stretch;min-height:920px">
 
-It runs on *your* machine, so your YNAB token and personal data stay local.
+<sc-if value="{{ isRail }}" hint-placeholder-val="{{ false }}">
+<div style="width:186px;flex:none;border-right:1px solid #1E201F;display:flex;flex-direction:column;padding:18px 0 0">
+<div style="padding:0 18px 20px;border-bottom:1px solid #1E201F">
+<div style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#E8E7E3">LEDGER</div>
+<div style="margin-top:7px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">PERSONAL · 2026</div>
+</div>
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<div onClick="{{ n.go }}" style="padding:11px 18px;cursor:pointer;border-bottom:1px solid #141615;display:flex;align-items:center;justify-content:space-between;color:{{ n.col }}" style-hover="color:#E8E7E3">
+<span style="font:400 12.5px/1 'IBM Plex Sans'">{{ n.label }}</span>
+<span style="width:2px;height:12px;background:{{ n.mark }}"></span>
+</div>
+</sc-for>
+<div style="margin-top:auto;padding:16px 18px;border-top:1px solid #1E201F;font:400 9.5px/1.6 'IBM Plex Mono',monospace;color:#4E514F">
+<div>SYNCED 09:14</div>
+<div>4 ACCOUNTS · OK</div>
+</div>
+</div>
+</sc-if>
 
----
+<div style="flex:1;min-width:0;display:flex;flex-direction:column">
 
-## 1. Get a YNAB token
+<div style="display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:52px;border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:center;gap:26px;min-width:0">
+<sc-if value="{{ isTabs }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:baseline;gap:9px">
+<span style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em">LEDGER</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">PERSONAL</span>
+</div>
+</sc-if>
+<sc-if value="{{ isTabs }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;gap:2px;align-self:stretch">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<div onClick="{{ n.go }}" style="height:52px;display:flex;align-items:center;padding:0 13px;cursor:pointer;font:400 12.5px/1 'IBM Plex Sans';color:{{ n.col }};box-shadow:inset 0 -1px 0 {{ n.mark }}" style-hover="color:#E8E7E3">{{ n.label }}</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isRail }}" hint-placeholder-val="{{ false }}">
+<div style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">{{ screenTitle }}</div>
+</sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:0">
+<div style="display:flex;align-items:center;gap:14px;padding-right:16px;border-right:1px solid #1E201F">
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">AUG 2026</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#4E514F">DAY 9 / 31</span>
+</div>
+<div style="display:flex;align-items:center;gap:8px;padding-left:16px">
+<span style="width:4px;height:4px;background:#3FA37A;border-radius:50%"></span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SYNCED 09:14</span>
+</div>
+</div>
+</div>
 
-YNAB → **Account Settings → Developer Settings → New Token**. Copy it.
+<!-- ══ OVERVIEW ══ -->
+<sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #1E201F">
+<sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+<div style="padding:20px 22px 18px;border-left:{{ k.bl }}">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
+<div style="margin-top:13px;font:200 30px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ k.vcol }}">{{ k.value }}</div>
+<div style="margin-top:11px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+<span style="font:400 10.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ k.sub }}</span>
+<sc-if value="{{ showSparks }}" hint-placeholder-val="{{ true }}">
+<svg width="68" height="18" viewBox="0 0 68 18" fill="none" style="display:block;opacity:.85"><path d="{{ k.spark }}" stroke="{{ k.scol }}" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</sc-if>
+</div>
+</div>
+</sc-for>
+</div>
 
-It's a *personal access token*: full read/write to your budget, and revocable
-in one click on that same page. Keep it in an environment variable, never in a
-file you might share.
+<div style="border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 0">
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">Net worth</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">36 MONTHS · GBP · MONTH END</span>
+</div>
+<div style="display:flex;gap:0;border:1px solid #1E201F">
+<sc-for list="{{ ranges }}" as="r" hint-placeholder-count="4">
+<div onClick="{{ r.go }}" style="padding:5px 11px;cursor:pointer;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:{{ r.col }};background:{{ r.bg }};border-left:{{ r.bl }}" style-hover="color:#E8E7E3">{{ r.label }}</div>
+</sc-for>
+</div>
+</div>
 
-## 2. Run it
+<div style="display:flex;padding:18px 26px 0">
+<div style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:268px;padding-bottom:1px">
+<sc-for list="{{ nwYLabels }}" as="l" hint-placeholder-count="5">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;text-align:right;padding-right:12px">{{ l.t }}</div>
+</sc-for>
+</div>
+<div onMouseMove="{{ onChartMove }}" onMouseLeave="{{ onChartLeave }}" style="flex:1;min-width:0;position:relative;height:268px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B;cursor:crosshair">
+<svg width="100%" height="100%" viewBox="0 0 1000 268" preserveAspectRatio="none" fill="none" style="display:block">
+<sc-for list="{{ nwGrid }}" as="g" hint-placeholder-count="5">
+<line x1="0" y1="{{ g.y }}" x2="1000" y2="{{ g.y }}" stroke="#171918" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+</sc-for>
+<path d="{{ nwAssets }}" stroke="#3A3D3B" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+<path d="{{ nwLiab }}" stroke="#2F3231" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+<path d="{{ nwProj }}" stroke="#3FA37A" stroke-width="1.25" stroke-dasharray="3 3" opacity=".55" vector-effect="non-scaling-stroke"></path>
+<path d="{{ nwLine }}" stroke="#3FA37A" stroke-width="1.4" vector-effect="non-scaling-stroke"></path>
+</svg>
+<div style="position:absolute;top:0;bottom:0;left:{{ projLeft }};border-left:1px dashed #262827"></div>
+<div style="position:absolute;top:6px;left:calc({{ projLeft }} + 8px);font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#4E514F">PROJECTED</div>
+<sc-if value="{{ hasHover }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:0;bottom:0;left:{{ hoverLeft }};border-left:1px solid #3A3D3B;pointer-events:none"></div>
+</sc-if>
+<sc-if value="{{ hasHover }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:8px;left:calc({{ hoverLeft }} + 10px);pointer-events:none;background:#0F1110;border:1px solid #2A2C2B;padding:8px 11px">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ hoverMonth }}</div>
+<div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:#3FA37A">{{ hoverNw }}</div>
+<div style="margin-top:6px;font:400 10px/1.5 'IBM Plex Mono',monospace;color:#5C5E5C">ASSETS {{ hoverAssets }}<br>DEBT&nbsp;&nbsp;&nbsp;{{ hoverLiab }}</div>
+</div>
+</sc-if>
+<div style="position:absolute;right:8px;top:{{ lblNw }};font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#3FA37A;pointer-events:none">NET WORTH</div>
+<div style="position:absolute;right:8px;top:{{ lblAssets }};font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#656866;pointer-events:none">ASSETS</div>
+<div style="position:absolute;right:8px;top:{{ lblLiab }};font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#555856;pointer-events:none">LIABILITIES</div>
+</div>
+</div>
+<div style="display:flex;padding:9px 26px 20px">
+<div style="width:64px;flex:none"></div>
+<div style="flex:1;display:flex;justify-content:space-between">
+<sc-for list="{{ nwXLabels }}" as="x" hint-placeholder-count="7">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#4E514F">{{ x.t }}</div>
+</sc-for>
+</div>
+</div>
+</div>
 
-Python 3.8+ is all you need — no third-party packages (uses the standard
-library).
+<div style="display:flex;align-items:stretch">
+<div style="flex:1.55;min-width:0;padding:22px 26px 26px;border-right:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 13px/1 'IBM Plex Sans'">Budget vs actual</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">29% OF MONTH ELAPSED</span>
+</div>
+<div style="margin-top:16px;border-top:1px solid #1E201F">
+<sc-for list="{{ budgetRows }}" as="b" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:1fr 96px 96px 110px;align-items:center;gap:14px;padding:11px 0 10px;border-bottom:1px solid #171918">
+<div>
+<div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ b.name }}</div>
+<div style="margin-top:8px;height:2px;background:#1A1C1B;position:relative">
+<div style="position:absolute;left:0;top:0;bottom:0;width:{{ b.pct }}%;background:{{ b.bar }}"></div>
+<div style="position:absolute;top:-3px;bottom:-3px;left:29%;width:1px;background:#34372F"></div>
+</div>
+</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ b.budgeted }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ b.spent }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ b.remCol }}">{{ b.remaining }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="flex:1;min-width:0;padding:22px 26px 26px">
+<div style="font:400 13px/1 'IBM Plex Sans'">Savings rate &amp; runway</div>
+<div style="margin-top:20px;display:flex;align-items:flex-end;gap:5px;height:78px">
+<sc-for list="{{ srBars }}" as="s" hint-placeholder-count="18">
+<div style="flex:1;height:{{ s.h }}%;background:{{ s.c }}"></div>
+</sc-for>
+</div>
+<div style="margin-top:9px;display:flex;justify-content:space-between;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F"><span>MAR 25</span><span>AUG 26</span></div>
+<div style="margin-top:22px;border-top:1px solid #1E201F">
+<sc-for list="{{ runwayRows }}" as="r" hint-placeholder-count="4">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:12px 0;border-bottom:1px solid #171918">
+<span style="font:400 11.5px/1 'IBM Plex Sans';color:#8A8B88">{{ r.k }}</span>
+<span style="font:400 13px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ r.c }}">{{ r.v }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
 
-```bash
-cd ledgerlens_sync
-export YNAB_TOKEN=your_token_here        # Windows: set YNAB_TOKEN=your_token_here
-python3 ynab_sync.py
-```
+<!-- ══ SPENDING ══ -->
+<sc-if value="{{ isSpending }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;flex-direction:column">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 20px;border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;gap:28px">
+<div>
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">SPENT THIS MONTH</div>
+<div style="margin-top:12px;font:200 34px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ spendTotal }}</div>
+</div>
+<div style="padding-left:28px;border-left:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">SAME POINT LAST MONTH</div>
+<div style="margin-top:12px;font:200 34px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#656866">{{ spendPrev }}</div>
+</div>
+</div>
+<div style="font:400 10.5px/1.7 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C;text-align:right">SELECTED · {{ selCat }}<br><span style="color:#3FA37A">{{ selCatSub }}</span></div>
+</div>
 
-Open the resulting **`ynab-ledger-dashboard.html`** in your browser. Done.
+<div style="display:flex;flex-direction:column">
 
-### Options
+<div style="order:{{ chartOrder }};padding:22px 26px 24px;border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 13px/1 'IBM Plex Sans'">{{ selCat }} · 18 months</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SELECTED SERIES IN ACCENT · OTHERS NEUTRAL</span>
+</div>
+<div style="display:flex;margin-top:16px">
+<div style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:210px">
+<sc-for list="{{ catYLabels }}" as="l" hint-placeholder-count="4">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;text-align:right;padding-right:12px">{{ l.t }}</div>
+</sc-for>
+</div>
+<div style="flex:1;min-width:0;height:210px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B">
+<svg width="100%" height="100%" viewBox="0 0 1000 210" preserveAspectRatio="none" fill="none" style="display:block">
+<sc-for list="{{ catGrid }}" as="g" hint-placeholder-count="4">
+<line x1="0" y1="{{ g.y }}" x2="1000" y2="{{ g.y }}" stroke="#171918" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+</sc-for>
+<sc-for list="{{ catGhosts }}" as="c" hint-placeholder-count="6">
+<path d="{{ c.d }}" stroke="#2C2F2D" stroke-width="1" vector-effect="non-scaling-stroke"></path>
+</sc-for>
+<path d="{{ catAvg }}" stroke="#454846" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"></path>
+<path d="{{ catMain }}" stroke="#3FA37A" stroke-width="1.4" vector-effect="non-scaling-stroke"></path>
+</svg>
+</div>
+</div>
+<div style="display:flex;margin-top:9px"><div style="width:64px;flex:none"></div><div style="flex:1;display:flex;justify-content:space-between">
+<sc-for list="{{ catXLabels }}" as="x" hint-placeholder-count="6">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ x.t }}</div>
+</sc-for>
+</div></div>
+</div>
 
-```
---budget last-used     which budget (default: your most recently used)
---months 24            months of history to analyse (default 36)
---out my-dash.html     output filename
---token xxx            token inline instead of the env var
-```
+<div style="order:{{ tableOrder }};padding:22px 26px 30px">
+<div style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
+<sc-for list="{{ catHead }}" as="h" hint-placeholder-count="6">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
+</sc-for>
+</div>
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="12">
+<div onClick="{{ c.go }}" style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ c.bg }}" style-hover="background:#111312">
+<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:11px;background:{{ c.mark }}"></span><span style="font:400 12.5px/1 'IBM Plex Sans';color:{{ c.col }}">{{ c.name }}</span></div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ c.budgeted }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ c.spent }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ c.remCol }}">{{ c.remaining }}</div>
+<div style="display:flex;align-items:center"><div style="flex:1;height:2px;background:#1A1C1B;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ c.pct }}%;background:{{ c.bar }}"></div></div></div>
+<sc-if value="{{ showSparks }}" hint-placeholder-val="{{ true }}">
+<svg width="130" height="18" viewBox="0 0 130 18" fill="none" style="display:block"><path d="{{ c.spark }}" stroke="{{ c.sparkCol }}" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</sc-if>
+</div>
+</sc-for>
+</div>
 
-## 3. Keep it fresh automatically
+</div>
+</div>
+</sc-if>
 
-**macOS / Linux (cron)** — refresh every morning at 7am:
+<!-- ══ CASH FLOW ══ -->
+<sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
+<div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1E201F">
+<sc-for list="{{ flowKpis }}" as="k" hint-placeholder-count="4">
+<div style="padding:20px 22px 18px;border-left:{{ k.bl }}">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
+<div style="margin-top:13px;font:200 30px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:{{ k.vcol }}">{{ k.value }}</div>
+<div style="margin-top:11px;font:400 10.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ k.sub }}</div>
+</div>
+</sc-for>
+</div>
 
-```cron
-0 7 * * *  cd /path/to/ledgerlens_sync && YNAB_TOKEN=xxx /usr/bin/python3 ynab_sync.py
-```
+<div style="padding:24px 26px 26px;border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 13px/1 'IBM Plex Sans'">Inflow, outflow, net</span>
+<div style="display:flex;gap:20px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em">
+<span style="color:#656866">▲ INFLOW</span><span style="color:#4A4D4B">▼ OUTFLOW</span><span style="color:#3FA37A">— NET</span>
+</div>
+</div>
+<div style="margin-top:22px;position:relative;height:230px">
+<div style="display:flex;gap:4px;height:230px;align-items:stretch">
+<sc-for list="{{ flowBars }}" as="f" hint-placeholder-count="24">
+<div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+<div style="height:100px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px"><div style="width:3px;height:{{ f.inH }}%;background:{{ f.inC }}"></div></div>
+<div style="height:1px;background:#2A2C2B"></div>
+<div style="height:100px;display:flex;align-items:flex-start;justify-content:center;padding-top:3px"><div style="width:3px;height:{{ f.outH }}%;background:{{ f.outC }}"></div></div>
+</div>
+</sc-for>
+</div>
+<svg width="100%" height="230" viewBox="0 0 1000 230" preserveAspectRatio="none" fill="none" style="display:block;position:absolute;inset:0;pointer-events:none"><path d="{{ netLine }}" stroke="#3FA37A" stroke-width="1.4" vector-effect="non-scaling-stroke"></path></svg>
+</div>
+<div style="margin-top:10px;display:flex;justify-content:space-between">
+<sc-for list="{{ flowXLabels }}" as="x" hint-placeholder-count="5">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ x.t }}</div>
+</sc-for>
+</div>
+</div>
 
-**Windows** — Task Scheduler → new task → action:
-`python3 C:\path\to\ledgerlens_sync\ynab_sync.py`, with `YNAB_TOKEN` set in the
-task's environment.
+<div style="padding:22px 26px 30px">
+<div style="display:grid;grid-template-columns:120px 1fr 1fr 1fr 1fr;gap:16px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
+<sc-for list="{{ flowHead }}" as="h" hint-placeholder-count="5">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
+</sc-for>
+</div>
+<sc-for list="{{ flowRows }}" as="r" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:120px 1fr 1fr 1fr 1fr;gap:16px;align-items:center;padding:11px 0;border-bottom:1px solid #171918">
+<div style="font:400 12px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#8A8B88">{{ r.m }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ r.inflow }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88">{{ r.outflow }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ r.netCol }}">{{ r.net }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#656866">{{ r.rate }}</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
 
-YNAB allows 200 requests/hour; one run is a single request, so any sane
-schedule is fine.
+<!-- ══ ACCOUNTS ══ -->
+<sc-if value="{{ isAccounts }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;align-items:stretch">
+<div style="flex:1.9;min-width:0;border-right:1px solid #1E201F">
+<sc-for list="{{ acctGroups }}" as="g" hint-placeholder-count="2">
+<div style="padding:22px 26px 24px;border-bottom:1px solid #1E201F">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 13px/1 'IBM Plex Sans'">{{ g.title }}</span>
+<span style="font:400 11px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88">{{ g.total }}</span>
+</div>
+<div style="margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
+<sc-for list="{{ acctHead }}" as="h" hint-placeholder-count="4">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
+</sc-for>
+</div>
+<sc-for list="{{ g.rows }}" as="a" hint-placeholder-count="4">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #171918">
+<div>
+<div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap">{{ a.name }}</div>
+<div style="margin-top:6px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#4E514F;white-space:nowrap">{{ a.type }}</div>
+</div>
+<sc-if value="{{ showSparks }}" hint-placeholder-val="{{ true }}">
+<svg width="110" height="22" viewBox="0 0 130 22" fill="none" style="display:block"><path d="{{ a.spark }}" stroke="{{ a.sparkCol }}" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</sc-if>
+<div style="text-align:right;font:300 15px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:{{ a.col }}">{{ a.balance }}</div>
+<div style="text-align:right;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#4E514F">{{ a.recon }}</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="flex:1;min-width:0;padding:22px 26px 26px">
+<div style="font:400 13px/1 'IBM Plex Sans'">Composition</div>
+<div style="margin-top:20px;display:flex;height:6px;gap:1px">
+<sc-for list="{{ compBars }}" as="c" hint-placeholder-count="5">
+<div style="width:{{ c.w }}%;background:{{ c.c }}"></div>
+</sc-for>
+</div>
+<div style="margin-top:20px;border-top:1px solid #1E201F">
+<sc-for list="{{ compRows }}" as="c" hint-placeholder-count="5">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:12px 0;border-bottom:1px solid #171918">
+<span style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:10px;background:{{ c.c }}"></span><span style="font:400 11.5px/1 'IBM Plex Sans';color:#8A8B88">{{ c.name }}</span></span>
+<span style="display:flex;align-items:baseline;gap:14px"><span style="font:400 10px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ c.pct }}</span><span style="font:400 12.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ c.v }}</span></span>
+</div>
+</sc-for>
+</div>
+<div style="margin-top:26px;padding-top:18px;border-top:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">NET WORTH</div>
+<div style="margin-top:12px;font:200 36px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ netWorthBig }}</div>
+<div style="margin-top:10px;font:400 10.5px/1 'IBM Plex Mono',monospace;color:#3FA37A">{{ netWorthDelta }}</div>
+</div>
+</div>
+</div>
+</sc-if>
 
----
+</div>
+</div>
 
-## What it writes
+<!-- ══ MOBILE ══ -->
+<div style="border-top:1px solid #1E201F;padding:34px 26px 46px">
+<div style="display:flex;align-items:baseline;gap:16px">
+<span style="font:400 13px/1 'IBM Plex Sans'">Mobile</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SAME SYSTEM · ONE COLUMN · SPARKLINES CARRY THE TREND</span>
+</div>
+<div style="margin-top:26px;display:flex;gap:48px;flex-wrap:wrap">
 
-| file | purpose |
-|---|---|
-| `ynab-ledger-dashboard.html` | the dashboard, ready to open |
-| `data.json` | the computed dataset (debugging / feeding other tools) |
-| `.ynab_raw.json` | cache of the last raw budget pulled |
+<div style="display:flex;flex-direction:column;gap:12px">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="393px,852px">
+<div style="height:100%;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',sans-serif;font-weight:300;overflow:hidden;padding-top:56px">
+<div style="padding:14px 20px 16px;border-bottom:1px solid #1E201F;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em">LEDGER</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">AUG 2026</span>
+</div>
+<div style="padding:22px 20px 20px;border-bottom:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">NET WORTH</div>
+<div style="margin-top:12px;font:200 42px/1 'IBM Plex Sans';letter-spacing:-.025em;font-variant-numeric:tabular-nums">{{ netWorthBig }}</div>
+<div style="margin-top:10px;display:flex;align-items:flex-end;justify-content:space-between">
+<span style="font:400 10px/1 'IBM Plex Mono',monospace;color:#3FA37A">{{ netWorthDelta }}</span>
+<svg width="120" height="26" viewBox="0 0 120 26" fill="none"><path d="{{ mobileSpark }}" stroke="#3FA37A" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #1E201F">
+<sc-for list="{{ mobileKpis }}" as="k" hint-placeholder-count="4">
+<div style="padding:15px 20px;border-left:{{ k.bl }};border-bottom:1px solid #171918">
+<div style="font:500 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
+<div style="margin-top:9px;font:300 20px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:{{ k.vcol }}">{{ k.value }}</div>
+</div>
+</sc-for>
+</div>
+<div style="padding:16px 20px 8px;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12px/1 'IBM Plex Sans'">Top categories</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SPENT / BUDGET</span>
+</div>
+<div style="padding:0 20px">
+<sc-for list="{{ mobileCats }}" as="c" hint-placeholder-count="6">
+<div style="padding:12px 0;border-bottom:1px solid #171918">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ c.name }}</span>
+<span style="font:400 11px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88">{{ c.pair }}</span>
+</div>
+<div style="margin-top:9px;height:2px;background:#1A1C1B;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ c.pct }}%;background:{{ c.bar }}"></div></div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-import>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#4E514F;text-align:center">OVERVIEW</div>
+</div>
 
-## Preview without a token (demo)
+<div style="display:flex;flex-direction:column;gap:12px">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="393px,852px">
+<div style="height:100%;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',sans-serif;font-weight:300;overflow:hidden;padding-top:56px">
+<div style="padding:14px 20px 16px;border-bottom:1px solid #1E201F;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12px/1 'IBM Plex Sans'">{{ selCat }}</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">18M</span>
+</div>
+<div style="padding:22px 20px 18px;border-bottom:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">SPENT · AUGUST</div>
+<div style="margin-top:12px;font:200 42px/1 'IBM Plex Sans';letter-spacing:-.025em;font-variant-numeric:tabular-nums">{{ selCatSpent }}</div>
+<div style="margin-top:8px;font:400 10px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ selCatSub }}</div>
+<div style="margin-top:20px;height:120px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B">
+<svg width="100%" height="100%" viewBox="0 0 1000 120" preserveAspectRatio="none" fill="none" style="display:block"><path d="{{ mobileCatAvg }}" stroke="#3A3D3B" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"></path><path d="{{ mobileCatMain }}" stroke="#3FA37A" stroke-width="1.4" vector-effect="non-scaling-stroke"></path></svg>
+</div>
+</div>
+<div style="padding:16px 20px 6px;font:400 12px/1 'IBM Plex Sans'">Recent</div>
+<div style="padding:0 20px">
+<sc-for list="{{ txns }}" as="t" hint-placeholder-count="7">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding:12px 0;border-bottom:1px solid #171918">
+<span style="display:flex;flex-direction:column;gap:6px"><span style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ t.payee }}</span><span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#4E514F">{{ t.meta }}</span></span>
+<span style="font:400 12.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88">{{ t.amt }}</span>
+</div>
+</sc-for>
+</div>
+</div>
+</x-import>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#4E514F;text-align:center">CATEGORY DETAIL</div>
+</div>
 
-```bash
-python3 make_mock.py        # writes a fake YNAB payload
-python3 -c "import json,ynab_sync,analytics;from datetime import date; \
- b=json.load(open('.ynab_mock.json'))['data']['budget']; \
- from analytics import _month_iter,_month_start,_add_month; \
- t=date.today(); lc=_add_month(_month_start(t),-1); h=_month_iter(_add_month(lc,-17),lc); \
- c,a,x,g=ynab_sync.normalise(b,h); analytics.set_assigned(g); \
- d=analytics.build_data(x,a,currency=c,today=t); ynab_sync.render(d,'demo.html')"
-# open demo.html
-```
+</div>
+</div>
 
----
+<!-- ══ NOTES ══ -->
+<div style="border-top:1px solid #1E201F;padding:30px 26px 60px;max-width:1100px">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">ASSUMPTIONS &amp; REASONING</div>
+<div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid #1E201F">
+<sc-for list="{{ notes }}" as="n" hint-placeholder-count="6">
+<div style="padding:18px 24px 20px;border-bottom:1px solid #171918;border-left:{{ n.bl }}">
+<div style="font:400 11.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ n.h }}</div>
+<div style="margin-top:9px;font:300 11.5px/1.65 'IBM Plex Sans';color:#7C7E7B;text-wrap:pretty">{{ n.b }}</div>
+</div>
+</sc-for>
+</div>
+</div>
 
-## How your accounts are classified (and how to adjust)
+</div>
 
-The dashboard needs to know which accounts are **liabilities** and which are
-**investments**. The script guesses:
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;navStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;tabs&quot;,&quot;rail&quot;],&quot;default&quot;:&quot;tabs&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;spendingLayout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;chart&quot;,&quot;table&quot;],&quot;default&quot;:&quot;chart&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;showSparklines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Data&quot;},&quot;currency&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;£&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Data&quot;}}">
+const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const rnd = i => { const x = Math.sin(i * 127.1 + 11.7) * 43758.5453; return x - Math.floor(x); };
+const path = (v, w, h, lo, hi, pad) => {
+  pad = pad || 0; const n = v.length; if (!n) return '';
+  const dx = n > 1 ? w / (n - 1) : 0, ih = h - pad * 2, sp = (hi - lo) || 1;
+  return v.map((y, i) => (i ? 'L' : 'M') + (i * dx).toFixed(2) + ' ' + (pad + ih - ((y - lo) / sp) * ih).toFixed(2)).join(' ');
+};
+const seg = (v, w, h, lo, hi, i0) => {
+  const n = v.length, dx = w / (n - 1), sp = (hi - lo) || 1;
+  return v.map((y, i) => (i ? 'L' : 'M') + ((i0 + i) * dx).toFixed(2) + ' ' + (h - ((y - lo) / sp) * h).toFixed(2)).join(' ');
+};
+const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
-- **Liabilities**: YNAB account types `creditCard`, `mortgage`, `lineOfCredit`,
-  loans, etc.
-- **Investments**: off-budget tracking accounts of type `otherAsset`, *or* any
-  account whose name contains `invest`, `isa`, `pension`, `stock`, `brokerage`,
-  `vanguard`, `fund`, `crypto`.
+class Component extends DCLogic {
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36 };
 
-If something lands in the wrong bucket, edit the `INVEST_HINTS` /
-`LIABILITY_TYPES` lists near the top of `ynab_sync.py`. (When this becomes a
-real app these become a one-time settings screen.)
+  get d() { if (!this._d) this._d = this.build(); return this._d; }
+  cur() { return this.props.currency ?? '£'; }
+  m(n, dp) {
+    const s = n < 0 ? '−' : '';
+    const a = Math.abs(n);
+    return s + this.cur() + a.toLocaleString('en-GB', { minimumFractionDigits: dp || 0, maximumFractionDigits: dp || 0 });
+  }
+  k(n) { const s = n < 0 ? '−' : ''; return s + this.cur() + (Math.abs(n) / 1000).toFixed(1) + 'k'; }
 
-Other reasonable assumptions baked in, all easy to change later:
+  build() {
+    const months = []; let y = 2023, mo = 8;
+    for (let i = 0; i < 36; i++) { months.push({ m: MN[mo], y, short: MN[mo].toUpperCase() + ' ' + String(y).slice(2) }); mo++; if (mo > 11) { mo = 0; y++; } }
 
-- **Net worth history** is reconstructed by walking transactions back from
-  today's balances (YNAB doesn't store historical balances). Closed accounts
-  are excluded.
-- **Income** = inflows categorised `Inflow: …` (Starting Balance and manual
-  adjustments are excluded so they don't look like salary).
-- **Projections** assume your recent 3-month savings rate continues, with
-  investment returns of 6% (expected) / 9% / 2%. Tune in `analytics.py`.
+    let v = 41200; const raw = [];
+    for (let i = 0; i < 36; i++) {
+      const drift = 2300 + (rnd(i) - .5) * 2000;
+      const shock = (i >= 14 && i <= 17) ? -3400 * rnd(i + 7) : 0;
+      v += drift + shock; raw.push(v);
+    }
+    const kf = (132073 - 41200) / (raw[35] - 41200);
+    const nw = raw.map(x => Math.round(41200 + (x - 41200) * kf));
+    const liab = months.map((_, i) => Math.round(18400 - (18400 - 10942) * (i / 35)));
+    const assets = nw.map((x, i) => x + liab[i]);
 
-## First run
+    const step = (nw[35] - nw[23]) / 12;
+    const proj = [nw[35]];
+    for (let i = 1; i <= 6; i++) proj.push(Math.round(nw[35] + step * i * (1 + (rnd(i + 40) - .5) * .2)));
 
-Because I built this against YNAB's documented API shapes but couldn't test it
-against a live token, the first run is the real test. If anything looks off —
-a miscategorised account, an odd number — send me the terminal output (and the
-top of `data.json`) and I'll adjust the mapping.
+    const catDefs = [
+      ['Rent', 1450, 1450], ['Groceries', 520, 168], ['Transit', 145, 42], ['Dining out', 220, 96],
+      ['Utilities', 210, 210], ['Subscriptions', 64, 41], ['Health', 95, 12], ['Home & garden', 130, 58],
+      ['Clothing', 80, 0], ['Travel', 300, 0], ['Gifts', 60, 24], ['Misc', 90, 31]
+    ];
+    const cats = catDefs.map(([name, b, s], ci) => {
+      const hist = [];
+      for (let i = 0; i < 18; i++) hist.push(Math.round(b * (0.62 + rnd(ci * 31 + i) * 0.72)));
+      hist[17] = s;
+      return { name, budgeted: b, spent: s, hist };
+    });
 
----
+    const flow = [];
+    for (let i = 0; i < 24; i++) {
+      const bonus = (i % 12 === 3) ? 2400 : 0;
+      const inflow = Math.round(5150 + (rnd(i + 3) - .5) * 620 + bonus);
+      const outflow = Math.round(4420 + (rnd(i + 61) - .5) * 3100);
+      flow.push({ i: inflow, o: outflow, n: inflow - outflow, label: months[i + 12].short });
+    }
 
-## Current dashboard refresh
+    const mkSpark = (base, n, sd) => { const a = []; let x = base; for (let i = 0; i < n; i++) { x += (rnd(sd + i) - .45) * base * .09; a.push(x); } return a; };
+    const accounts = {
+      budget: [
+        { name: 'Everyday Current', type: 'CHECKING', bal: 2418.60, s: mkSpark(2400, 12, 5) },
+        { name: 'Joint Current', type: 'CHECKING', bal: 1142.05, s: mkSpark(1100, 12, 90) },
+        { name: 'Savings — Instant', type: 'SAVINGS · 4.1% AER', bal: 14300.00, s: mkSpark(12000, 12, 140) },
+        { name: 'Credit Card', type: 'CREDIT', bal: -1842.31, s: mkSpark(-1700, 12, 200) }
+      ],
+      tracking: [
+        { name: 'Stocks & Shares ISA', type: 'INVESTMENT', bal: 46215.40, s: mkSpark(40000, 12, 260) },
+        { name: 'Workplace Pension', type: 'INVESTMENT', bal: 78940.00, s: mkSpark(71000, 12, 320) },
+        { name: 'Student Loan', type: 'LIABILITY · PLAN 2', bal: -9100.00, s: mkSpark(-9800, 12, 380) }
+      ]
+    };
+    return { months, nw, liab, assets, proj, cats, flow, accounts };
+  }
 
-The active dashboard is `ynab-ledger-dashboard.html`. It is a self-contained
-file with calculated display data embedded in it; it does **not** contain a
-YNAB personal access token.
+  go(s) { return () => this.setState({ screen: s }); }
 
-Set `YNAB_TOKEN` in the environment, then run:
+  renderVals() {
+    const d = this.d, S = this.state, P = this.props;
+    const showSparks = P.showSparklines ?? true;
+    const screens = [['overview', 'Overview'], ['spending', 'Spending'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
+    const nav = screens.map(([id, label]) => ({
+      label, go: this.go(id),
+      col: S.screen === id ? '#E8E7E3' : '#6E706D',
+      mark: S.screen === id ? ACCENT : 'transparent'
+    }));
 
-```powershell
-python ynab_sync.py
-```
+    // ── net worth chart
+    const n = S.range, hist = d.nw.slice(36 - n), histL = d.liab.slice(36 - n), histA = d.assets.slice(36 - n), mo = d.months.slice(36 - n);
+    const all = hist.concat(d.proj, histA, histL);
+    const lo = Math.min(...all) * 0.9, hi = Math.max(...all) * 1.04;
+    const totalPts = n + 6;
+    const W = 1000, H = 268;
+    const nwLine = seg(hist, W, H, lo, hi, 0) && hist.map((y, i) => (i ? 'L' : 'M') + (i * (W / (totalPts - 1))).toFixed(2) + ' ' + (H - ((y - lo) / (hi - lo)) * H).toFixed(2)).join(' ');
+    const dx = W / (totalPts - 1);
+    const mk = (arr, off) => arr.map((y, i) => (i ? 'L' : 'M') + ((i + off) * dx).toFixed(2) + ' ' + (H - ((y - lo) / (hi - lo)) * H).toFixed(2)).join(' ');
+    const gridVals = [0, .25, .5, .75, 1];
+    const nwGrid = gridVals.map(g => ({ y: (H - g * H).toFixed(1) }));
+    const nwYLabels = [1, .75, .5, .25, 0].map(g => ({ t: this.k(lo + g * (hi - lo)) }));
+    const step = Math.max(1, Math.floor(n / 6));
+    const nwXLabels = mo.filter((_, i) => i % step === 0).map(x => ({ t: x.short })).concat([{ t: 'FEB 27' }]);
+    const projLeft = ((n - 1) / (totalPts - 1) * 100).toFixed(2) + '%';
+    const topPct = v => Math.max(2, Math.min(84, (H - ((v - lo) / (hi - lo)) * H) / H * 100)).toFixed(1) + '%';
 
-That pulls the selected YNAB budget, refreshes the local cache, regenerates
-`data.json`, and updates `ynab-ledger-dashboard.html` in place. Open that HTML
-file in a browser after the command completes.
+    const hv = S.hover;
+    const hasHover = hv !== null && hv < n;
+    const hoverLeft = hasHover ? (hv / (totalPts - 1) * 100).toFixed(2) + '%' : '0%';
 
-To rebuild the dashboard from the latest local cache without contacting YNAB:
+    // ── KPIs
+    const sp = (a, w, h) => path(a, w - 2, h - 4, Math.min(...a), Math.max(...a), 2);
+    const last12 = d.nw.slice(24);
+    const flow12 = d.flow.slice(12);
+    const srSeries = flow12.map(f => f.n / f.i * 100);
+    const runway = flow12.map(f => 16442 / f.o);
+    const kpiDefs = [
+      ['NET WORTH', this.m(d.nw[35]), '+2.4% · 30D', last12, ACCENT, '#E8E7E3'],
+      ['READY TO ASSIGN', this.m(0, 2), 'FULLY ALLOCATED', last12.map(() => 1), '#2C2F2D', '#656866'],
+      ['AGE OF MONEY', '47', 'DAYS · +4 VS JUL', d.flow.slice(12).map(f => f.n / 90 + 40), '#656866', '#E8E7E3'],
+      ['SAVINGS RATE', '24.8%', '12M MEAN 21.3%', srSeries, ACCENT, '#E8E7E3'],
+      ['RUNWAY', '6.4', 'MONTHS OF BURN', runway, '#656866', '#E8E7E3']
+    ];
+    const kpis = kpiDefs.map(([label, value, sub, series, scol, vcol], i) => ({
+      label, value, sub, scol, vcol, bl: i ? HAIR : '0', spark: sp(series, 68, 18)
+    }));
 
-```powershell
-python ynab_sync.py --from-cache
-```
+    // ── budget rows
+    const top6 = d.cats.slice().sort((a, b) => b.budgeted - a.budgeted).slice(0, 6);
+    const budgetRows = top6.map(c => {
+      const pct = Math.min(100, c.spent / c.budgeted * 100);
+      const rem = c.budgeted - c.spent;
+      return {
+        name: c.name, budgeted: this.m(c.budgeted), spent: this.m(c.spent),
+        remaining: this.m(rem), remCol: rem < 0 ? '#E8E7E3' : '#5C5E5C',
+        pct: pct.toFixed(1), bar: pct > 90 ? '#E8E7E3' : '#454846'
+      };
+    });
 
-Keep `.ynab_raw.json` and `data.json` private: both contain personal financial
-information. Do not upload them to a public repository or website.
+    const srMax = Math.max(...srSeries), srMin = Math.min(...srSeries, 0);
+    const srBars = srSeries.map((s, i) => ({
+      h: (8 + (s - srMin) / (srMax - srMin) * 92).toFixed(1),
+      c: i === srSeries.length - 1 ? ACCENT : '#2C2F2D'
+    }));
+    const runwayRows = [
+      { k: 'Liquid buffer', v: this.m(16442), c: '#D2D1CD' },
+      { k: 'Average monthly burn', v: this.m(2570), c: '#D2D1CD' },
+      { k: 'Runway', v: '6.4 mo', c: ACCENT },
+      { k: 'Target (6 mo)', v: 'Met', c: '#656866' }
+    ];
 
-## GitHub
+    // ── spending
+    const sel = d.cats.find(c => c.name === S.cat) || d.cats[1];
+    const spendTotal = d.cats.reduce((a, c) => a + c.spent, 0);
+    const catHead = [{ t: 'CATEGORY', a: 'left' }, { t: 'BUDGETED', a: 'right' }, { t: 'SPENT', a: 'right' }, { t: 'REMAINING', a: 'right' }, { t: 'USED', a: 'left' }, { t: '18-MONTH TREND', a: 'left' }];
+    const cats = d.cats.map(c => {
+      const on = c.name === sel.name, pct = Math.min(100, c.spent / c.budgeted * 100), rem = c.budgeted - c.spent;
+      return {
+        name: c.name, budgeted: this.m(c.budgeted), spent: this.m(c.spent), remaining: this.m(rem),
+        remCol: rem < 0 ? '#E8E7E3' : '#5C5E5C', pct: pct.toFixed(1),
+        bar: on ? ACCENT : (pct > 90 ? '#8A8B88' : '#3A3D3B'),
+        col: on ? '#E8E7E3' : '#A9AAA7', mark: on ? ACCENT : 'transparent',
+        bg: on ? '#0F1110' : 'transparent',
+        sparkCol: on ? ACCENT : '#3A3D3B',
+        spark: sp(c.hist, 130, 18),
+        go: () => this.setState({ cat: c.name })
+      };
+    });
+    const CH = 210;
+    const others = d.cats.filter(c => c.name !== sel.name && c.name !== 'Rent');
+    const cLo = 0, cHi = Math.max(...sel.hist, ...others.map(c => Math.max(...c.hist))) * 1.08;
+    const catGhosts = others.map(c => ({ d: path(c.hist, W, CH, cLo, cHi) }));
+    const avg = sel.hist.map((_, i) => d.cats.reduce((a, c) => a + c.hist[i], 0) / d.cats.length);
+    const catGrid = [0, .33, .66, 1].map(g => ({ y: (CH - g * CH).toFixed(1) }));
+    const catYLabels = [1, .66, .33, 0].map(g => ({ t: this.m(Math.round(cLo + g * (cHi - cLo))) }));
+    const catMonths = d.months.slice(18);
+    const catXLabels = catMonths.filter((_, i) => i % 4 === 0).map(x => ({ t: x.short })).concat([{ t: catMonths[17].short }]);
 
-The repository contains the source code and project-local design assets.
-Generated dashboards and YNAB data are excluded by `.gitignore`. Keep
-`YNAB_TOKEN` in your local environment and never commit it.
+    // ── cash flow
+    const fMax = Math.max(...d.flow.map(f => Math.max(f.i, f.o)));
+    const flowBars = d.flow.map((f, i) => ({
+      inH: (f.i / fMax * 100).toFixed(1), outH: (f.o / fMax * 100).toFixed(1),
+      inC: i === d.flow.length - 1 ? '#8A8B88' : '#3E4140',
+      outC: i === d.flow.length - 1 ? '#5C5E5C' : '#262928'
+    }));
+    const nMax = Math.max(...d.flow.map(f => Math.abs(f.n)));
+    const netLine = d.flow.map((f, i) => (i ? 'L' : 'M') + ((i + .5) * (1000 / 24)).toFixed(2) + ' ' + (115 - f.n / nMax * 100).toFixed(2)).join(' ');
+    const flowXLabels = d.flow.filter((_, i) => i % 5 === 0).map(f => ({ t: f.label })).concat([{ t: d.flow[23].label }]);
+    const flowHead = [{ t: 'MONTH', a: 'left' }, { t: 'INFLOW', a: 'right' }, { t: 'OUTFLOW', a: 'right' }, { t: 'NET', a: 'right' }, { t: 'SAVINGS RATE', a: 'right' }];
+    const flowRows = d.flow.slice(-6).reverse().map(f => ({
+      m: f.label, inflow: this.m(f.i), outflow: this.m(f.o), net: this.m(f.n),
+      netCol: f.n < 0 ? '#E8E7E3' : ACCENT, rate: (f.n / f.i * 100).toFixed(1) + '%'
+    }));
+    const avgNet = Math.round(d.flow.slice(-12).reduce((a, f) => a + f.n, 0) / 12);
+    const best = d.flow.reduce((a, f) => f.n > a.n ? f : a);
+    const worst = d.flow.reduce((a, f) => f.n < a.n ? f : a);
+    const flowKpis = [
+      ['AVERAGE NET / MONTH', this.m(avgNet), 'TRAILING 12 MONTHS', ACCENT],
+      ['BEST MONTH', this.m(best.n), best.label + ' · INFLOW ' + this.k(best.i), '#E8E7E3'],
+      ['WORST MONTH', this.m(worst.n), worst.label + ' · OUTFLOW ' + this.k(worst.o), '#E8E7E3'],
+      ['MONTHS NET-POSITIVE', d.flow.filter(f => f.n > 0).length + ' / 24', 'CONSISTENCY', '#E8E7E3']
+    ].map(([label, value, sub, vcol], i) => ({ label, value, sub, vcol, bl: i ? HAIR : '0' }));
 
-## Where this goes next
+    // ── accounts
+    const acctHead = [{ t: 'ACCOUNT', a: 'left' }, { t: '12-MONTH', a: 'left' }, { t: 'BALANCE', a: 'right' }, { t: 'RECONCILED', a: 'right' }];
+    const mkRows = list => list.map((a, i) => ({
+      name: a.name, type: a.type, balance: this.m(a.bal, 2),
+      col: a.bal < 0 ? '#8A8B88' : '#E8E7E3',
+      spark: sp(a.s, 130, 22), sparkCol: a.bal < 0 ? '#3A3D3B' : '#4E514F',
+      recon: ['2 DAYS AGO', 'TODAY', '6 DAYS AGO', 'TODAY'][i % 4]
+    }));
+    const sum = l => l.reduce((x, a) => x + a.bal, 0);
+    const acctGroups = [
+      { title: 'Budget accounts', total: this.m(sum(d.accounts.budget), 2), rows: mkRows(d.accounts.budget) },
+      { title: 'Tracking accounts', total: this.m(sum(d.accounts.tracking), 2), rows: mkRows(d.accounts.tracking) }
+    ];
+    const comp = [
+      { name: 'Workplace Pension', v: 78940, c: '#8A8B88' },
+      { name: 'Stocks & Shares ISA', v: 46215, c: ACCENT },
+      { name: 'Cash savings', v: 14300, c: '#5C5E5C' },
+      { name: 'Current accounts', v: 3561, c: '#3E4140' },
+      { name: 'Debt', v: -10942, c: '#262928' }
+    ];
+    const posTotal = comp.filter(c => c.v > 0).reduce((a, c) => a + c.v, 0);
+    const compBars = comp.filter(c => c.v > 0).map(c => ({ w: (c.v / posTotal * 100).toFixed(2), c: c.c }));
+    const compRows = comp.map(c => ({ name: c.name, c: c.c, v: this.m(c.v), pct: (Math.abs(c.v) / posTotal * 100).toFixed(1) + '%' }));
 
-This is the **personal-token** path. If Ledgerlens ever becomes a hosted app
-other people log into, the same `analytics.py` stays exactly as-is; only the
-fetch layer changes — swap the token call for a YNAB **OAuth** flow
-(“Connect YNAB” button → redirect → access/refresh tokens) and add incremental
-**delta sync** via `last_knowledge_of_server` so refreshes only pull what
-changed.
+    // ── mobile
+    const mobileKpis = [
+      ['SAVINGS RATE', '24.8%', '#E8E7E3'], ['AGE OF MONEY', '47d', '#E8E7E3'],
+      ['READY TO ASSIGN', this.m(0, 2), '#656866'], ['RUNWAY', '6.4 mo', ACCENT]
+    ].map(([label, value, vcol], i) => ({ label, value, vcol, bl: i % 2 ? HAIR : '0' }));
+    const mobileCats = d.cats.filter(c => c.spent > 0).sort((a, b) => b.spent - a.spent).slice(0, 6).map(c => {
+      const pct = Math.min(100, c.spent / c.budgeted * 100);
+      return { name: c.name, pair: this.m(c.spent) + ' / ' + this.m(c.budgeted), pct: pct.toFixed(1), bar: pct > 90 ? '#8A8B88' : ACCENT };
+    });
+    const txns = [
+      ['Neighbourhood Market', 'AUG 8 · CARD ····4471', '−' + this.cur() + '42.18'],
+      ['Corner Grocer', 'AUG 6 · CARD ····4471', '−' + this.cur() + '18.90'],
+      ['Weekly Delivery', 'AUG 5 · DIRECT DEBIT', '−' + this.cur() + '61.44'],
+      ['Neighbourhood Market', 'AUG 3 · CARD ····4471', '−' + this.cur() + '27.05'],
+      ['Farm Shop', 'AUG 2 · CARD ····1102', '−' + this.cur() + '11.30'],
+      ['Corner Grocer', 'AUG 1 · CARD ····4471', '−' + this.cur() + '7.13']
+    ].map(([payee, meta, amt]) => ({ payee, meta, amt }));
+
+    const notes = [
+      ['Read-only, one budget', 'Assumes a single YNAB budget synced hourly through the API. Nothing is edited here — the app is a lens over data YNAB already owns, so no assignment or transaction entry.'],
+      ['Four surfaces, one grid', 'Overview, Spending, Cash flow, Accounts share a 26px gutter and the same hairline system. Regions are separated by 1px rules rather than cards, so screens read as one continuous surface.'],
+      ['Accent carries meaning only', 'Green marks the current series, the selected row, and net-positive values. Everything else is one of six greys. Overspending is signalled by weight and a brighter grey, not by a second colour.'],
+      ['Projection is explicit', 'The dashed net-worth extension is a naive 12-month trend, drawn past a labelled boundary. It is never mixed with recorded history in the same stroke.'],
+      ['Numbers are illustrative', 'Balances, categories and payees are plausible placeholders. Swap in a real export and the layout holds — every figure is derived, none hard-positioned.'],
+      ['Tweaks', 'Navigation (top tabs / left rail), spending layout (chart-first / table-first), sparklines on or off, and currency symbol are exposed as props rather than separate mockups.']
+    ].map(([h, b], i) => ({ h, b, bl: i % 3 ? HAIR : '0' }));
+
+    return {
+      nav, showSparks,
+      isTabs: (P.navStyle ?? 'tabs') === 'tabs', isRail: (P.navStyle ?? 'tabs') === 'rail',
+      screenTitle: (screens.find(s => s[0] === S.screen) || screens[0])[1],
+      isOverview: S.screen === 'overview', isSpending: S.screen === 'spending',
+      isFlow: S.screen === 'flow', isAccounts: S.screen === 'accounts',
+      ranges: [12, 24, 36].map((r, i) => ({
+        label: r + 'M', go: () => this.setState({ range: r, hover: null }),
+        col: S.range === r ? '#E8E7E3' : '#5C5E5C', bg: S.range === r ? '#161817' : 'transparent',
+        bl: i ? HAIR : '0'
+      })),
+      nwLine: mk(hist, 0), nwProj: mk(d.proj, n - 1), nwAssets: mk(histA, 0), nwLiab: mk(histL, 0),
+      nwGrid, nwYLabels, nwXLabels, projLeft,
+      lblNw: topPct(hist[n - 1]), lblAssets: topPct(histA[n - 1]), lblLiab: topPct(histL[n - 1]),
+      hasHover, hoverLeft,
+      hoverMonth: hasHover ? mo[hv].short : '', hoverNw: hasHover ? this.m(hist[hv]) : '',
+      hoverAssets: hasHover ? this.m(histA[hv]) : '', hoverLiab: hasHover ? this.m(histL[hv]) : '',
+      onChartMove: e => {
+        const r = e.currentTarget.getBoundingClientRect();
+        const i = Math.round((e.clientX - r.left) / r.width * (totalPts - 1));
+        this.setState({ hover: Math.max(0, Math.min(n - 1, i)) });
+      },
+      onChartLeave: () => this.setState({ hover: null }),
+      kpis, budgetRows, srBars, runwayRows,
+      spendTotal: this.m(spendTotal), spendPrev: this.m(2384),
+      selCat: sel.name, selCatSpent: this.m(sel.spent),
+      selCatSub: this.m(sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),
+      chartOrder: (P.spendingLayout ?? 'chart') === 'chart' ? 1 : 2,
+      tableOrder: (P.spendingLayout ?? 'chart') === 'chart' ? 2 : 1,
+      catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
+      catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
+      flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
+      acctHead, acctGroups, compBars, compRows,
+      netWorthBig: this.m(d.nw[35]), netWorthDelta: '+' + this.m(3118) + ' · 30 DAYS',
+      mobileSpark: path(last12, 118, 24, Math.min(...last12), Math.max(...last12), 1),
+      mobileKpis, mobileCats, txns,
+      mobileCatMain: path(sel.hist, 1000, 120, cLo, cHi), mobileCatAvg: path(avg, 1000, 120, cLo, cHi),
+      notes
+    };
+  }
+}
+
+</script>
+</body>
+</html>

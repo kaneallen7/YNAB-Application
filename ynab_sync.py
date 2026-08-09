@@ -240,8 +240,9 @@ def _template_model(data):
                  if a.get("on_budget", True) and not a.get("is_liability"))
     savings_rate = float(data.get("kpi", {}).get("savings_rate", 0))
     last12 = nw[-12:]
-    sr_series = [f["n"] / f["i"] * 100 if f["i"] else 0 for f in flow[-12:]]
-    runway_series = [liquid / f["o"] if f["o"] else 0 for f in flow[-12:]]
+    complete_flow = [f for f in flow if "(MTD)" not in str(f.get("label", ""))]
+    sr_series = [f["n"] / f["i"] * 100 if f["i"] else 0 for f in complete_flow[-12:]]
+    runway_series = [liquid / f["o"] if f["o"] else 0 for f in complete_flow[-12:]]
     kpi_defs = [
         ["NET WORTH", current_nw, f"{len(rows)} MONTHS OF HISTORY", last12, "#3FA37A", "#E8E7E3"],
         ["READY TO ASSIGN", float(meta.get("ready", 0)), "CURRENT PLAN MONTH", last12, "#2C2F2D", "#656866"],
@@ -286,7 +287,7 @@ def _live_template_html(data):
     html = html.replace("  build() {", "  build() {\n    if (window.__YNAB_TEMPLATE_DATA__) return window.__YNAB_TEMPLATE_DATA__;", 1)
     html = html.replace("const n = S.range, hist = d.nw.slice(36 - n), histL = d.liab.slice(36 - n), histA = d.assets.slice(36 - n), mo = d.months.slice(36 - n);", "const n = Math.min(S.range, d.nw.length), hist = d.nw.slice(-n), histL = d.liab.slice(-n), histA = d.assets.slice(-n), mo = d.months.slice(-n);")
     html = html.replace("const last12 = d.nw.slice(24);", "const last12 = d.nw.slice(-12);")
-    html = html.replace("const flow12 = d.flow.slice(12);", "const flow12 = d.flow.slice(-12);")
+    html = html.replace("const flow12 = d.flow.slice(12);", "const completeFlow = d.flow.filter(f => !String(f.label || '').includes('(MTD)')); const flow12 = completeFlow.slice(-12);")
     html = html.replace("const runway = flow12.map(f => 16442 / f.o);", "const runway = flow12.map(f => d.liquid / (f.o || 1));")
     html = html.replace("const pct = Math.min(100, c.spent / c.budgeted * 100);\n      const rem = c.budgeted - c.spent;", "const pct = c.budgeted > 0 ? Math.min(100, c.spent / c.budgeted * 100) : 0;\n      const rem = Number.isFinite(c.balance) ? c.balance : c.budgeted - c.spent;")
     html = html.replace("const on = c.name === sel.name, pct = Math.min(100, c.spent / c.budgeted * 100), rem = c.budgeted - c.spent;", "const on = c.name === sel.name, pct = c.budgeted > 0 ? Math.min(100, c.spent / c.budgeted * 100) : 0, rem = Number.isFinite(c.balance) ? c.balance : c.budgeted - c.spent;")

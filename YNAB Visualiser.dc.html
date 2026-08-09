@@ -176,7 +176,7 @@ a:hover{color:#5DBE95}
 <div style="flex:1;height:{{ s.h }}%;background:{{ s.c }}"></div>
 </sc-for>
 </div>
-<div style="margin-top:9px;display:flex;justify-content:space-between;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F"><span>MAR 25</span><span>AUG 26</span></div>
+<div style="margin-top:9px;padding:0 1px;display:flex;justify-content:space-between;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F"><span>{{ srStart }}</span><span>{{ srEnd }}</span></div>
  </div>
 <div style="flex:1;min-width:0;border-top:1px solid #1E201F">
 <sc-for list="{{ runwayRows }}" as="r" hint-placeholder-count="4">
@@ -617,6 +617,8 @@ class Component extends DCLogic {
     const last12 = d.nw.slice(24);
     const flow12 = d.flow.slice(12);
     const srSeries = flow12.map(f => f.n / f.i * 100);
+    const srStart = flow12[0] ? flow12[0].label.replace(' (MTD)', '') : '';
+    const srEnd = flow12.length ? flow12[flow12.length - 1].label.replace(' (MTD)', '') : '';
     const runway = flow12.map(f => 16442 / f.o);
     const kpiDefs = [
       ['NET WORTH', this.m(d.nw[35]), '+2.4% · 30D', last12, ACCENT, '#E8E7E3'],
@@ -652,9 +654,9 @@ class Component extends DCLogic {
     const budgetRows = top6.map(makeBudgetRow);
     const budgetAllRows = d.cats.map(makeBudgetRow);
 
-    const srMax = Math.max(...srSeries), srMin = Math.min(...srSeries, 0);
+    const srMax = Math.max(...srSeries, 0), srMin = Math.min(...srSeries, 0), srRange = Math.max(1, srMax - srMin);
     const srBars = srSeries.map((s, i) => ({
-      h: (8 + (s - srMin) / (srMax - srMin) * 92).toFixed(1),
+      h: (8 + (s - srMin) / srRange * 92).toFixed(1),
       c: i === srSeries.length - 1 ? ACCENT : '#2C2F2D'
     }));
     const runwayRows = [
@@ -790,7 +792,7 @@ class Component extends DCLogic {
         this.setState({ hover: Math.max(0, Math.min(n - 1, i)) });
       },
       onChartLeave: () => this.setState({ hover: null }),
-      kpis, budgetRows, srBars, runwayRows,
+      kpis, budgetRows, srBars, srStart, srEnd, runwayRows,
       spendTotal: this.m(spendTotal), spendPrev: this.m(2384),
       selCat: sel.name, selCatSpent: this.m(sel.spent),
       selCatSub: this.m(sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),

@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+# Personal YNAB data and generated dashboard files
+.ynab_raw.json
+.ynab_mock.json
+data.json
+ynab-ledger-dashboard.html
+ledgerlens.html
+demo.html
+
+# Legacy/generated local template and Python cache
+template.html
+__pycache__/
+*.py[cod]

@@ -24,7 +24,7 @@ a:hover{color:#5DBE95}
 <div style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#E8E7E3">LEDGER</div>
 <div style="margin-top:7px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">PERSONAL · 2026</div>
 </div>
-<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
 <div onClick="{{ n.go }}" style="padding:11px 18px;cursor:pointer;border-bottom:1px solid #141615;display:flex;align-items:center;justify-content:space-between;color:{{ n.col }}" style-hover="color:#E8E7E3">
 <span style="font:400 12.5px/1 'IBM Plex Sans'">{{ n.label }}</span>
 <span style="width:2px;height:12px;background:{{ n.mark }}"></span>
@@ -49,7 +49,7 @@ a:hover{color:#5DBE95}
 </sc-if>
 <sc-if value="{{ isTabs }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;align-items:center;gap:2px;align-self:stretch">
-<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
 <div onClick="{{ n.go }}" style="height:52px;display:flex;align-items:center;padding:0 13px;cursor:pointer;font:400 12.5px/1 'IBM Plex Sans';color:{{ n.col }};box-shadow:inset 0 -1px 0 {{ n.mark }}" style-hover="color:#E8E7E3">{{ n.label }}</div>
 </sc-for>
 </div>
@@ -92,7 +92,7 @@ a:hover{color:#5DBE95}
 <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 0">
 <div style="display:flex;align-items:baseline;gap:16px">
 <span style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">Net worth</span>
-<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">36 MONTHS · GBP · MONTH END</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ nwSubtitle }}</span>
 </div>
 <div style="display:flex;gap:0;border:1px solid #1E201F">
 <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="4">
@@ -189,28 +189,12 @@ a:hover{color:#5DBE95}
 </div>
 </div>
 </div>
-<div style="padding:22px 26px 26px;border-top:1px solid #1E201F">
-<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C;margin-bottom:3px">ALL CATEGORIES</div>
-<sc-for list="{{ budgetAllRows }}" as="b" hint-placeholder-count="12">
-<div style="display:grid;grid-template-columns:1fr 96px 96px 110px;align-items:center;gap:14px;padding:11px 0 10px;border-bottom:1px solid #171918">
-<div>
-<div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ b.name }}</div>
-<div style="margin-top:8px;height:2px;background:#1A1C1B;position:relative">
-<div style="position:absolute;left:0;top:0;bottom:0;width:{{ b.pct }}%;background:{{ b.bar }}"></div>
-<div style="position:absolute;top:-3px;bottom:-3px;left:29%;width:1px;background:#34372F"></div>
-</div>
-</div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ b.budgeted }}</div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ b.spent }}</div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ b.remCol }}">{{ b.remaining }}</div>
-</div>
-</sc-for>
 </div>
 </sc-if>
 
 <!-- ══ SPENDING ══ -->
 <sc-if value="{{ isSpending }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;flex-direction:column">
+<div style="display:flex;flex-direction:column;position:relative">
 <div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 20px;border-bottom:1px solid #1E201F">
 <div style="display:flex;align-items:baseline;gap:28px">
 <div>
@@ -222,7 +206,7 @@ a:hover{color:#5DBE95}
 <div style="margin-top:12px;font:200 34px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#656866">{{ spendPrev }}</div>
 </div>
 </div>
-<div style="font:400 10.5px/1.7 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C;text-align:right">SELECTED · {{ selCat }}<br><span style="color:#3FA37A">{{ selCatSub }}</span></div>
+<div style="font:400 10.5px/1.7 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C;text-align:right">SELECTED · {{ selCat }}<br><span style="color:#3FA37A">{{ selCatSub }}</span><br><span style="color:#8A8B88">MOVED OUT {{ selCatMoved }}</span><br><span onClick="{{ openTxnDrawer }}" style="display:inline-block;margin-top:7px;padding:5px 7px;border:1px solid #3A3D3B;color:#D2D1CD;cursor:pointer">VIEW {{ selTxnsNote }}</span></div>
 </div>
 
 <div style="display:flex;flex-direction:column">
@@ -266,7 +250,7 @@ a:hover{color:#5DBE95}
 </div>
 <sc-for list="{{ cats }}" as="c" hint-placeholder-count="12">
 <div onClick="{{ c.go }}" style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ c.bg }}" style-hover="background:#111312">
-<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:11px;background:{{ c.mark }}"></span><span style="font:400 12.5px/1 'IBM Plex Sans';color:{{ c.col }}">{{ c.name }}</span></div>
+<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:11px;background:{{ c.mark }}"></span><span style="font:400 12.5px/1 'IBM Plex Sans';color:{{ c.col }}">{{ c.name }}</span><span onClick="{{ c.open }}" style="font:400 9px/1 'IBM Plex Mono',monospace;color:{{ c.txnCol }};cursor:pointer;padding:3px 5px;border:1px solid #2A2C2B">{{ c.txnLabel }}</span></div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ c.budgeted }}</div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ c.spent }}</div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ c.remCol }}">{{ c.remaining }}</div>
@@ -278,7 +262,52 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 
+<sc-if value="{{ showTxnDrawer }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;z-index:30;right:26px;top:{{ txnTop }};width:min(620px,calc(100% - 52px));padding:18px 20px 20px;background:#0F1110;border:1px solid #3A3D3B;box-shadow:0 16px 36px rgba(0,0,0,.42)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+<span style="font:400 13px/1 'IBM Plex Sans'">Transactions · {{ selCat }}</span>
+<div style="display:flex;align-items:center;gap:14px"><span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ selTxnsNote }}</span><span onClick="{{ closeTxnDrawer }}" style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8B88;cursor:pointer">CLOSE ×</span></div>
 </div>
+<sc-for list="{{ selTxns }}" as="t" hint-placeholder-count="6">
+<div style="display:grid;grid-template-columns:94px 1fr 150px 92px;gap:14px;align-items:baseline;padding:9px 0;border-bottom:1px solid #171918">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ t.date }}</div>
+<div><div style="font:400 11.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ t.payee }}</div><div style="margin-top:4px;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ t.account }}</div></div>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.memo }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;color:{{ t.col }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+
+<!-- ══ TRANSACTIONS ══ -->
+<sc-if value="{{ isTransactions }}" hint-placeholder-val="{{ false }}">
+<div style="padding:22px 26px 30px">
+<div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid #1E201F">
+<div><span style="font:400 13px/1 'IBM Plex Sans'">Transaction history</span><div style="margin-top:8px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">ALL CATEGORIES · {{ txnHistoryNote }}</div></div>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">NET ACTIVITY · TRANSFERS / ADJUSTMENTS EXCLUDED</span>
+</div>
+<sc-for list="{{ transactionMonths }}" as="m" hint-placeholder-count="12">
+<div onClick="{{ m.toggle }}" style="display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ m.bg }}">
+<div style="display:flex;align-items:baseline;gap:16px"><span style="font:400 12.5px/1 'IBM Plex Mono',monospace;color:#D2D1CD">{{ m.label }}</span><span style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ m.count }} TRANSACTIONS</span></div>
+<div style="display:flex;align-items:center;gap:18px"><span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#D2D1CD">{{ m.total }}</span><span style="font:400 13px/1 'IBM Plex Mono',monospace;color:#8A8B88">{{ m.chevron }}</span></div>
+</div>
+<sc-if value="{{ m.isOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:0 0 8px;border-bottom:1px solid #3A3D3B">
+<sc-for list="{{ m.rows }}" as="t" hint-placeholder-count="12">
+<div style="display:grid;grid-template-columns:94px 1fr 150px 92px;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid #171918">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ t.date }}</div>
+<div><div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ t.payee }}</div><div style="margin-top:5px;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ t.account }} · {{ t.category }}</div></div>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.memo }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;color:{{ t.col }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-for>
 </div>
 </sc-if>
 
@@ -512,7 +541,7 @@ const seg = (v, w, h, lo, hi, i0) => {
 const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
 class Component extends DCLogic {
-  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36 };
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null };
 
   get d() { if (!this._d) this._d = this.build(); return this._d; }
   cur() { return this.props.currency ?? '£'; }
@@ -584,7 +613,7 @@ class Component extends DCLogic {
   renderVals() {
     const d = this.d, S = this.state, P = this.props;
     const showSparks = P.showSparklines ?? true;
-    const screens = [['overview', 'Overview'], ['spending', 'Spending'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
+    const screens = [['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
     const nav = screens.map(([id, label]) => ({
       label, go: this.go(id),
       col: S.screen === id ? '#E8E7E3' : '#6E706D',
@@ -680,7 +709,10 @@ class Component extends DCLogic {
         bg: on ? '#0F1110' : 'transparent',
         sparkCol: on ? ACCENT : '#3A3D3B',
         spark: sp(c.hist, 130, 18),
-        go: () => this.setState({ cat: c.name })
+        txnLabel: ((d.transactionDetails || []).filter(t => t.category === c.name).length || 0) + ' TXNS',
+        txnCol: on ? ACCENT : '#5C5E5C',
+        go: () => this.setState({ cat: c.name, txnOpen: true }),
+        open: e => { e?.stopPropagation?.(); this.setState({ cat: c.name, txnOpen: true }); }
       };
     });
     const CH = 210;
@@ -773,7 +805,7 @@ class Component extends DCLogic {
       nav, showSparks,
       isTabs: (P.navStyle ?? 'tabs') === 'tabs', isRail: (P.navStyle ?? 'tabs') === 'rail',
       screenTitle: (screens.find(s => s[0] === S.screen) || screens[0])[1],
-      isOverview: S.screen === 'overview', isSpending: S.screen === 'spending',
+      isOverview: S.screen === 'overview', isSpending: S.screen === 'spending', isTransactions: S.screen === 'transactions',
       isFlow: S.screen === 'flow', isAccounts: S.screen === 'accounts',
       ranges: [12, 24, 36].map((r, i) => ({
         label: r + 'M', go: () => this.setState({ range: r, hover: null }),

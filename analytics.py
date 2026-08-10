@@ -315,6 +315,14 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
             for t in sorted((t for t in txns if not t["is_transfer"] and not t.get("is_adjustment")),
                             key=lambda t: t["date"], reverse=True)[:6]
         ],
+        "transaction_details": [
+            {"date": t["date"], "payee": t.get("payee") or "(no payee)",
+             "account": t.get("account") or "Account", "category": t.get("category") or "Uncategorised",
+             "amount": round(t["amount"], 2), "memo": t.get("memo") or "",
+             "cleared": t.get("cleared") or "uncleared", "approved": bool(t.get("approved", False)),
+             "flag": t.get("flag_color") or "", "type": "TRANSFER" if t.get("is_transfer") else ("ADJUSTMENT" if t.get("is_adjustment") else ("INCOME" if t.get("is_income") else "SPENDING"))}
+            for t in sorted(txns, key=lambda t: t["date"], reverse=True)
+        ],
         "n_txns": sum(1 for t in txns if not t["is_transfer"]),
     }
 

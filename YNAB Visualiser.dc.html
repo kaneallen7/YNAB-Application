@@ -81,11 +81,14 @@ a:hover{color:#5DBE95}
   .accounts-pane [style*="grid-template-columns"]{min-width:540px!important}
   .composition-pane{padding:18px 14px 24px!important}
   .template-preview,.template-notes{display:none!important}
-  .app-shell:has(.mobile-overview) .app-header{display:none!important}
   .app-shell:has(.mobile-overview) .app-body{min-height:0!important}
   .app-shell:has(.mobile-overview) .app-main{width:100%!important}
   .overview-screen>.overview-desktop{display:none!important}
   .mobile-overview{display:block!important}
+  .app-tabs>div:nth-child(2){display:none!important}
+}
+@media (min-width:721px){
+  .app-tabs>div:first-child{display:none!important}
 }
 @media (max-width:480px){
   .app-brand{display:none!important}
@@ -758,11 +761,11 @@ class Component extends DCLogic {
   renderVals() {
     const d = this.d, S = this.state, P = this.props;
     const showSparks = P.showSparklines ?? true;
-    const screens = [['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
+    const screens = [['summary', 'Summary'], ['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
     const nav = screens.map(([id, label]) => ({
       label, go: this.go(id),
-      col: S.screen === id ? '#E8E7E3' : '#6E706D',
-      mark: S.screen === id ? ACCENT : 'transparent'
+      col: (S.screen === id || (id === 'summary' && S.screen === 'overview')) ? '#E8E7E3' : '#6E706D',
+      mark: (S.screen === id || (id === 'summary' && S.screen === 'overview')) ? ACCENT : 'transparent'
     }));
 
     // ── net worth chart
@@ -950,7 +953,7 @@ class Component extends DCLogic {
       nav, showSparks,
       isTabs: (P.navStyle ?? 'tabs') === 'tabs', isRail: (P.navStyle ?? 'tabs') === 'rail',
       screenTitle: (screens.find(s => s[0] === S.screen) || screens[0])[1],
-      isOverview: S.screen === 'overview', isSpending: S.screen === 'spending', isTransactions: S.screen === 'transactions',
+      isOverview: S.screen === 'overview' || S.screen === 'summary', isSpending: S.screen === 'spending', isTransactions: S.screen === 'transactions',
       isFlow: S.screen === 'flow', isAccounts: S.screen === 'accounts',
       ranges: [12, 24, 36].map((r, i) => ({
         label: r + 'M', go: () => this.setState({ range: r, hover: null }),

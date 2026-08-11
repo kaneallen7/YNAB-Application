@@ -20,10 +20,16 @@ a:hover{color:#5DBE95}
 .overview-mix-donut{width:164px;flex:0 0 164px}
 .overview-mix-legend{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 22px}
 .overview-mix-legend>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.overview-mix-segment{cursor:pointer;transition:opacity .16s ease}
+.overview-mix-card,.mobile-overview-mix-card{margin-top:18px;border:1px solid #2A2C2B;background:#0F1110;padding:15px 16px}
+.overview-mix-card-grid,.mobile-overview-mix-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:14px}
+.overview-mix-card-trend,.mobile-overview-mix-card-trend{margin-top:14px;padding-top:12px;border-top:1px solid #1E201F}
 .mobile-overview-mix{border-top:1px solid #1E201F;padding:18px 20px 22px}
 .mobile-overview-mix-layout{display:flex;align-items:center;gap:16px;margin-top:14px}
 .mobile-overview-mix-donut{width:132px;flex:0 0 132px}
 .mobile-overview-mix-legend{flex:1;display:grid;grid-template-columns:1fr;gap:8px;min-width:0}
+.mobile-overview-mix-card{margin-top:16px;padding:13px 14px}
+.mobile-overview-mix-card-grid{gap:10px;margin-top:12px}
 /* Keep the single-surface desktop composition intact while allowing every
    production screen to reflow cleanly on a phone-sized viewport. */
 @media (max-width:720px){
@@ -318,12 +324,12 @@ a:hover{color:#5DBE95}
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">THIS MONTH Â· {{ mixTotal }}</span>
 </div>
 <div class="overview-mix-layout">
-<div class="overview-mix-donut">
+<div class="overview-mix-donut" onClick="{{ openMix }}" style="cursor:pointer">
 <svg viewBox="0 0 164 164" role="img" aria-label="Current month spending mix" style="display:block;width:100%;height:auto">
 <circle cx="82" cy="82" r="54" fill="none" stroke="#171918" stroke-width="18"></circle>
 <g transform="rotate(-90 82 82)">
 <sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
-<circle cx="82" cy="82" r="54" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="18" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}"></circle>
+<circle class="overview-mix-segment" onClick="{{ m.open }}" cx="82" cy="82" r="54" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="18" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}" opacity="{{ m.opacity }}"></circle>
 </sc-for>
 </g>
 <text x="82" y="78" text-anchor="middle" style="font:400 9px 'IBM Plex Mono';letter-spacing:.08em;fill:#6E706D">SPENT</text>
@@ -332,10 +338,21 @@ a:hover{color:#5DBE95}
 </div>
 <div class="overview-mix-legend">
 <sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
-<div><span style="display:flex;align-items:center;gap:9px;min-width:0"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 11.5px/1 'IBM Plex Sans';color:#8A8B88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 11.5px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
+<div onClick="{{ m.open }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;cursor:pointer;opacity:{{ m.opacity }}"><span style="display:flex;align-items:center;gap:9px;min-width:0"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 11.5px/1 'IBM Plex Sans';color:{{ m.textCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 11.5px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
 </sc-for>
 </div>
 </div>
+<sc-if value="{{ mixOpen }}" hint-placeholder-val="{{ false }}">
+<div class="overview-mix-card">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font:400 12px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.name }}</span><span onClick="{{ closeMix }}" style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.08em;color:#6E706D;cursor:pointer">CLOSE Ã—</span></div>
+<div class="overview-mix-card-grid">
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">SPENT</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.spent }}</div></div>
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">BUDGETED</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.budgeted }}</div></div>
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">REMAINING</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:{{ mixDetail.remCol }}">{{ mixDetail.remaining }}</div></div>
+</div>
+<div class="overview-mix-card-trend"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">18-MONTH TREND</span><span style="font:400 9px/1 'IBM Plex Mono';color:{{ mixDetail.color }}">{{ mixDetail.status }}</span></div><svg viewBox="0 0 280 42" preserveAspectRatio="none" style="display:block;width:100%;height:42px;margin-top:9px"><path d="{{ mixDetail.trend }}" fill="none" stroke="{{ mixDetail.color }}" stroke-width="1.4" vector-effect="non-scaling-stroke"></path></svg><div style="display:flex;justify-content:space-between;font:400 8px/1 'IBM Plex Mono';color:#4E514F"><span>{{ mixDetail.start }}</span><span>{{ mixDetail.end }}</span><span>{{ mixDetail.txns }}</span></div></div>
+</div>
+</sc-if>
 </div>
 <div class="mobile-overview" style="display:none;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
 <div style="padding:18px 20px 16px;border-bottom:1px solid #1E201F;display:flex;align-items:baseline;justify-content:space-between">
@@ -379,12 +396,12 @@ a:hover{color:#5DBE95}
 <span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ mixTotal }}</span>
 </div>
 <div class="mobile-overview-mix-layout">
-<div class="mobile-overview-mix-donut">
+<div class="mobile-overview-mix-donut" onClick="{{ openMix }}" style="cursor:pointer">
 <svg viewBox="0 0 132 132" role="img" aria-label="Current month spending mix" style="display:block;width:100%;height:auto">
 <circle cx="66" cy="66" r="44" fill="none" stroke="#171918" stroke-width="15"></circle>
 <g transform="rotate(-90 66 66)">
 <sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
-<circle cx="66" cy="66" r="44" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="15" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}"></circle>
+<circle class="overview-mix-segment" onClick="{{ m.open }}" cx="66" cy="66" r="44" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="15" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}" opacity="{{ m.opacity }}"></circle>
 </sc-for>
 </g>
 <text x="66" y="63" text-anchor="middle" style="font:400 8px 'IBM Plex Mono';letter-spacing:.08em;fill:#6E706D">SPENT</text>
@@ -393,10 +410,21 @@ a:hover{color:#5DBE95}
 </div>
 <div class="mobile-overview-mix-legend">
 <sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
-<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="width:5px;height:5px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 10.5px/1 'IBM Plex Sans';color:#8A8B88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 10px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
+<div onClick="{{ m.open }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;cursor:pointer;opacity:{{ m.opacity }}"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="width:5px;height:5px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 10.5px/1 'IBM Plex Sans';color:{{ m.textCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 10px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
 </sc-for>
 </div>
 </div>
+<sc-if value="{{ mixOpen }}" hint-placeholder-val="{{ false }}">
+<div class="mobile-overview-mix-card">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font:400 11px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.name }}</span><span onClick="{{ closeMix }}" style="font:400 8px/1 'IBM Plex Mono';letter-spacing:.08em;color:#6E706D;cursor:pointer">CLOSE Ã—</span></div>
+<div class="mobile-overview-mix-card-grid">
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">SPENT</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.spent }}</div></div>
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">BUDGETED</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.budgeted }}</div></div>
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">REMAINING</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:{{ mixDetail.remCol }}">{{ mixDetail.remaining }}</div></div>
+</div>
+<div class="mobile-overview-mix-card-trend"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">18-MONTH TREND</span><span style="font:400 8px/1 'IBM Plex Mono';color:{{ mixDetail.color }}">{{ mixDetail.status }}</span></div><svg viewBox="0 0 280 42" preserveAspectRatio="none" style="display:block;width:100%;height:42px;margin-top:8px"><path d="{{ mixDetail.trend }}" fill="none" stroke="{{ mixDetail.color }}" stroke-width="1.3" vector-effect="non-scaling-stroke"></path></svg><div style="display:flex;justify-content:space-between;font:400 7.5px/1 'IBM Plex Mono';color:#4E514F"><span>{{ mixDetail.start }}</span><span>{{ mixDetail.end }}</span><span>{{ mixDetail.txns }}</span></div></div>
+</div>
+</sc-if>
 </div>
 </div>
 </div>
@@ -751,7 +779,7 @@ const seg = (v, w, h, lo, hi, i0) => {
 const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
 class Component extends DCLogic {
-  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null };
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null };
 
   get d() { if (!this._d) this._d = this.build(); return this._d; }
   cur() { return this.props.currency ?? '£'; }
@@ -1002,8 +1030,20 @@ class Component extends DCLogic {
       const arc = Math.max(1, c.spent / mixValue * (100 - mixSource.length * mixGap));
       const offset = -mixCursor;
       mixCursor += arc + mixGap;
-      return { name: c.name, spent: this.m(c.spent), c: mixPalette[i], arc: arc.toFixed(2), rest: (100 - arc).toFixed(2), dash: arc.toFixed(2) + ',' + (100 - arc).toFixed(2), offset: offset.toFixed(2) };
+      const selected = S.mixCat === c.name;
+      return { name: c.name, spent: this.m(c.spent), c: mixPalette[i], arc: arc.toFixed(2), rest: (100 - arc).toFixed(2), dash: arc.toFixed(2) + ',' + (100 - arc).toFixed(2), offset: offset.toFixed(2), opacity: S.mixCat && !selected ? '.2' : '1', textCol: S.mixCat && !selected ? '#5C5E5C' : '#8A8B88', open: () => this.setState({ mixOpen: true, mixCat: c.name }) };
     });
+    const mixDetailSource = d.cats.find(c => c.name === S.mixCat) || mixSource[0] || d.cats[0];
+    const mixDetailPct = mixDetailSource && mixDetailSource.budgeted > 0 ? Math.min(100, mixDetailSource.spent / mixDetailSource.budgeted * 100) : 0;
+    const mixDetailRemaining = mixDetailSource ? mixDetailSource.budgeted - mixDetailSource.spent : 0;
+    const mixDetailTxns = mixDetailSource ? ((d.transactionDetails || []).filter(t => t.category === mixDetailSource.name).length || 0) : 0;
+    const mixDetail = mixDetailSource ? {
+      name: mixDetailSource.name, spent: this.m(mixDetailSource.spent), budgeted: this.m(mixDetailSource.budgeted),
+      remaining: this.m(mixDetailRemaining), remCol: mixDetailRemaining < 0 ? '#E8E7E3' : '#D2D1CD',
+      color: mixPalette[Math.max(0, mixSource.findIndex(c => c.name === mixDetailSource.name))] || ACCENT,
+      trend: sp(mixDetailSource.hist, 280, 42), status: mixDetailSource.budgeted > 0 ? mixDetailPct.toFixed(0) + '% USED' : 'UNBUDGETED',
+      start: d.months[18] ? d.months[18].short : '', end: d.months[35] ? d.months[35].short : '', txns: mixDetailTxns + ' TXNS'
+    } : { name: '', spent: '', budgeted: '', remaining: '', remCol: '#D2D1CD', color: ACCENT, trend: '', status: '', start: '', end: '', txns: '' };
     const txns = [
       ['Neighbourhood Market', 'AUG 8 · CARD ····4471', '−' + this.cur() + '42.18'],
       ['Corner Grocer', 'AUG 6 · CARD ····4471', '−' + this.cur() + '18.90'],
@@ -1057,7 +1097,7 @@ class Component extends DCLogic {
       acctHead, acctGroups, compBars, compRows,
       netWorthBig: this.m(d.nw[35]), netWorthDelta: (d.netWorthDelta >= 0 ? '+' : '') + this.m(d.netWorthDelta) + ' · 30 DAYS',
       mobileSpark: path(last12, 118, 24, Math.min(...last12), Math.max(...last12), 1),
-      mobileKpis, mobileCats, mixTotal: this.m(mixValue), mixSegments, txns,
+      mobileKpis, mobileCats, mixTotal: this.m(mixValue), mixSegments, mixOpen: Boolean(S.mixOpen), mixDetail, openMix: () => this.setState({ mixOpen: true, mixCat: mixSource[0] ? mixSource[0].name : null }), closeMix: () => this.setState({ mixOpen: false }), txns,
       mobileCatMain: path(sel.hist, 1000, 120, cLo, cHi), mobileCatAvg: path(avg, 1000, 120, cLo, cHi),
       notes
     };

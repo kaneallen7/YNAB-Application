@@ -89,6 +89,18 @@ a:hover{color:#5DBE95}
   .overview-kpis [style*="font:200 30px"]{font-size:22px!important}
   .overview-chart{height:190px!important}
   .spending-chart{height:165px!important}
+  /* Keep every spending field visible on a phone. The desktop table remains
+     six columns wide; on a narrow screen the same fields use compact tracks
+     instead of falling off the right edge of the viewport. */
+  .spending-table-wrap{overflow-x:hidden!important;padding-left:14px!important;padding-right:14px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]{width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1.9fr) 40px 40px 46px 28px 48px!important;gap:4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child{min-width:0!important;overflow:hidden;flex-wrap:wrap!important;gap:4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child>span:nth-of-type(2){min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child>span:nth-of-type(3){flex:none!important;white-space:nowrap!important;font-size:8px!important;padding:2px 4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:not(:first-child){min-width:0!important;overflow:hidden}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:not(:first-child)[style*="font:500 9px"]{font-size:8px!important;line-height:1.1!important;letter-spacing:.04em!important;overflow-wrap:anywhere!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]:first-of-type>div{font-size:7.5px!important;line-height:1.1!important;letter-spacing:.03em!important;white-space:normal!important;word-break:break-word!important;text-align:center!important}
+  .spending-table-wrap>div[style*="grid-template-columns"] svg{width:48px!important;height:16px!important}
 }
 </style></helmet>
 <div class="app-shell" style="min-height:100vh;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">

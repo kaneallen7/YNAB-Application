@@ -14,6 +14,7 @@ a{color:#3FA37A;text-decoration:none}
 a:hover{color:#5DBE95}
 ::selection{background:#3FA37A;color:#080909}
 .template-preview,.template-notes{display:none!important}
+.mobile-overview{display:none!important}
 /* Keep the single-surface desktop composition intact while allowing every
    production screen to reflow cleanly on a phone-sized viewport. */
 @media (max-width:720px){
@@ -80,6 +81,11 @@ a:hover{color:#5DBE95}
   .accounts-pane [style*="grid-template-columns"]{min-width:540px!important}
   .composition-pane{padding:18px 14px 24px!important}
   .template-preview,.template-notes{display:none!important}
+  .app-shell:has(.mobile-overview) .app-header{display:none!important}
+  .app-shell:has(.mobile-overview) .app-body{min-height:0!important}
+  .app-shell:has(.mobile-overview) .app-main{width:100%!important}
+  .overview-screen>.overview-desktop{display:none!important}
+  .mobile-overview{display:block!important}
 }
 @media (max-width:480px){
   .app-brand{display:none!important}
@@ -172,7 +178,8 @@ a:hover{color:#5DBE95}
 
 <!-- ══ OVERVIEW ══ -->
 <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
-<div>
+<div class="overview-screen">
+<div class="overview-desktop">
 <div class="overview-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #1E201F">
 <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
 <div style="padding:20px 22px 18px;border-left:{{ k.bl }}">
@@ -287,6 +294,44 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="mobile-overview" style="display:none;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
+<div style="padding:18px 20px 16px;border-bottom:1px solid #1E201F;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em">LEDGER</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ mobilePeriod }}</span>
+</div>
+<div style="padding:26px 20px 22px;border-bottom:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">NET WORTH</div>
+<div style="margin-top:12px;font:200 42px/1 'IBM Plex Sans';letter-spacing:-.025em;font-variant-numeric:tabular-nums">{{ netWorthBig }}</div>
+<div style="margin-top:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<span style="font:400 10px/1 'IBM Plex Mono',monospace;color:#3FA37A">{{ netWorthDelta }}</span>
+<svg width="120" height="26" viewBox="0 0 120 26" fill="none" style="display:block;max-width:42%"><path d="{{ mobileSpark }}" stroke="#3FA37A" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</div>
+</div>
+<div class="mobile-overview-kpis" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #1E201F">
+<sc-for list="{{ mobileKpis }}" as="k" hint-placeholder-count="4">
+<div style="padding:16px 20px;border-left:{{ k.bl }};border-bottom:1px solid #171918">
+<div style="font:500 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
+<div style="margin-top:9px;font:300 20px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:{{ k.vcol }}">{{ k.value }}</div>
+</div>
+</sc-for>
+</div>
+<div style="padding:18px 20px 8px;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12px/1 'IBM Plex Sans'">Top categories</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SPENT / BUDGET</span>
+</div>
+<div class="mobile-overview-cats" style="padding:0 20px">
+<sc-for list="{{ mobileCats }}" as="c" hint-placeholder-count="6">
+<div style="padding:12px 0;border-bottom:1px solid #171918">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<span style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD;min-width:0">{{ c.name }}</span>
+<span style="font:400 11px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88;white-space:nowrap">{{ c.pair }}</span>
+</div>
+<div style="margin-top:9px;height:2px;background:#1A1C1B;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ c.pct }}%;background:{{ c.bar }}"></div></div>
+</div>
+</sc-for>
 </div>
 </div>
 </div>
@@ -934,7 +979,7 @@ class Component extends DCLogic {
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
       acctHead, acctGroups, compBars, compRows,
-      netWorthBig: this.m(d.nw[35]), netWorthDelta: '+' + this.m(3118) + ' · 30 DAYS',
+      netWorthBig: this.m(d.nw[35]), netWorthDelta: (d.netWorthDelta >= 0 ? '+' : '') + this.m(d.netWorthDelta) + ' · 30 DAYS',
       mobileSpark: path(last12, 118, 24, Math.min(...last12), Math.max(...last12), 1),
       mobileKpis, mobileCats, txns,
       mobileCatMain: path(sel.hist, 1000, 120, cLo, cHi), mobileCatAvg: path(avg, 1000, 120, cLo, cHi),

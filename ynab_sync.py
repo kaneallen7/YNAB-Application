@@ -288,6 +288,7 @@ def _template_model(data):
         "runwayRows": [["Liquid buffer", liquid, "#D2D1CD"], ["Average monthly burn", avg_spend, "#D2D1CD"],
                        ["Runway", f"{(liquid / avg_spend if avg_spend else 0):.1f} mo", "#3FA37A"], ["Target (6 mo)", "Met" if liquid >= avg_spend * 6 else "Building", "#656866"]],
         "spendPrev": previous_flow["o"], "savingsRate": savings_rate, "age": meta.get("age") or "—",
+        "mobilePeriod": date.today().strftime("%b %Y").upper(),
         "ready": float(meta.get("ready", 0)), "netWorthDelta": current_nw - (nw[-2] if len(nw) > 1 else current_nw),
         "planName": meta.get("plan", "YNAB PLAN"), "currentPeriod": last_flow["label"] or meta.get("last_month", "CURRENT"),
         "periodDetail": "LIVE YNAB DATA", "syncLabel": "SYNCED FROM YNAB",

@@ -289,6 +289,31 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
                              "income": income, "outflow": outflow,
                              "net": round(income - outflow, 2)})
 
+    # Preserve a complete, month-grouped transaction history for the
+    # Transactions screen.  The dashboard can then render expandable month
+    # drawers without reconstructing groups in the browser.
+    txn_by_month = defaultdict(list)
+    for t in sorted(txns, key=lambda item: item["date"], reverse=True):
+        txn_by_month[t["date"][:7]].append({
+            "date": t["date"],
+            "payee": t.get("payee") or "(no payee)",
+            "account": t.get("account") or "Account",
+            "category": t.get("category") or "Uncategorised",
+            "amount": round(t["amount"], 2),
+            "memo": t.get("memo") or "",
+            "type": "TRANSFER" if t.get("is_transfer") else ("ADJUSTMENT" if t.get("is_adjustment") else ("INCOME" if t.get("is_income") else "SPENDING")),
+        })
+    transaction_months = []
+    for key, rows in txn_by_month.items():
+        month_total = sum(r["amount"] for r in rows if r["type"] not in ("TRANSFER", "ADJUSTMENT"))
+        transaction_months.append({
+            "key": key,
+            "label": _mlabel(date.fromisoformat(key + "-01")),
+            "count": len(rows),
+            "total": round(month_total, 2),
+            "rows": rows,
+        })
+
     return {
         "meta": {"currency": currency, "generated": "live",
                  "last_month": _mlabel(hist_months[-1]),
@@ -315,7 +340,7 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
             for t in sorted((t for t in txns if not t["is_transfer"] and not t.get("is_adjustment")),
                             key=lambda t: t["date"], reverse=True)[:6]
         ],
-        "transaction_details": [
+         "transaction_details": [
             {"date": t["date"], "payee": t.get("payee") or "(no payee)",
              "account": t.get("account") or "Account", "category": t.get("category") or "Uncategorised",
              "amount": round(t["amount"], 2), "memo": t.get("memo") or "",
@@ -323,7 +348,8 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
              "flag": t.get("flag_color") or "", "type": "TRANSFER" if t.get("is_transfer") else ("ADJUSTMENT" if t.get("is_adjustment") else ("INCOME" if t.get("is_income") else "SPENDING"))}
             for t in sorted(txns, key=lambda t: t["date"], reverse=True)
         ],
-        "n_txns": sum(1 for t in txns if not t["is_transfer"]),
+         "transaction_months": transaction_months,
+         "n_txns": sum(1 for t in txns if not t["is_transfer"]),
     }
 
 

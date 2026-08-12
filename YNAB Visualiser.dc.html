@@ -39,16 +39,29 @@ a:hover{color:#5DBE95}
 .insight-card-title{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
 .insight-card-title>span:first-child{font:400 13px/1 'IBM Plex Sans';color:#E8E7E3}
 .insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
-.insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative}
+.insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
 .insight-node{fill:#121615;stroke:#2A2C2B;stroke-width:1}
-.insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:hidden;pointer-events:none}
+.insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid transparent;border-radius:2px;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.insight-node-copy:hover,.insight-node-copy:focus{background:#1A211E;border-color:#3FA37A;outline:none;transform:translateY(-1px)}
 .insight-node-copy span:first-child{font:400 11px/1.1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .insight-node-copy span:last-child{margin-top:5px;font:400 9px/1 'IBM Plex Mono';color:#6E706D;white-space:nowrap}
 .insight-node-label{font:400 11px 'IBM Plex Sans';fill:#D2D1CD}
 .insight-node-value{font:400 9px 'IBM Plex Mono';fill:#6E706D}
-.insight-link{fill:none;stroke:#3FA37A;stroke-linecap:round;opacity:.34}
+.insight-link{fill:none;stroke:#3FA37A;stroke-linecap:round;opacity:.34;transition:opacity .26s ease,stroke-width .26s ease}
 .insight-link.save{stroke:#8F9C7A;opacity:.48}
+.sankey-hint{margin-top:10px;font:400 8.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C}
+.sankey-expand-action{display:inline-block;margin-top:10px;padding:6px 8px;border:1px solid #2A2C2B;color:#8A8B88;cursor:pointer;font:400 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;transition:color .18s ease,border-color .18s ease,background .18s ease}
+.sankey-expand-action:hover{color:#E8E7E3;border-color:#3FA37A;background:#111A16}
+.sankey-detail,.calendar-detail{margin-top:12px;padding:12px 13px;background:#0F1110;border:1px solid #2A2C2B;animation:insightPanelIn .22s ease both}
+.sankey-detail-head,.calendar-detail-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.sankey-detail-name,.calendar-detail-date{font:400 12px/1 'IBM Plex Sans';color:#E8E7E3}
+.sankey-detail-close,.calendar-detail-close{font:400 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#6E706D;cursor:pointer}
+.sankey-detail-close:hover,.calendar-detail-close:hover{color:#E8E7E3}
+.sankey-detail-meta,.calendar-detail-meta{margin-top:8px;font:400 8.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#6E706D}
+.sankey-detail-value,.calendar-detail-total{margin-top:10px;font:300 22px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:#E8E7E3}
+.sankey-detail-note,.calendar-detail-cats{margin-top:8px;font:300 10px/1.5 'IBM Plex Sans';color:#8A8B88}
+@keyframes insightPanelIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 .heatmap-shell{margin-top:18px;overflow:hidden}
 .heatmap-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:5px}
 .heatmap-weekdays span{font:400 8px/1 'IBM Plex Mono';color:#4E514F;text-align:center}
@@ -64,8 +77,10 @@ a:hover{color:#5DBE95}
 .calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
 .calendar-weekdays{padding:10px 0 6px}
 .calendar-weekdays span{font:400 8px/1 'IBM Plex Mono';letter-spacing:.06em;color:#4E514F;text-align:right}
-.calendar-cell{min-height:48px;padding:6px 6px 5px;border:1px solid #1A1C1B;background:#101312;display:flex;flex-direction:column;justify-content:space-between}
+.calendar-cell{min-height:48px;padding:6px 6px 5px;border:1px solid #1A1C1B;background:#101312;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .calendar-cell.empty{background:transparent;border-color:transparent}
+.calendar-cell:hover,.calendar-cell.selected{border-color:#3FA37A;transform:translateY(-1px)}
+.calendar-cell.empty:hover{border-color:transparent;transform:none}
 .calendar-cell.today{border-color:#3FA37A}
 .calendar-day{font:400 9px/1 'IBM Plex Mono';color:#8A8B88}
 .calendar-amount{font:400 10px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -145,7 +160,8 @@ a:hover{color:#5DBE95}
   .insights-intro>span:last-child{display:block!important;margin-top:9px!important;line-height:1.5!important}
   .insights-grid{display:block!important}
   .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
-  .insight-sankey{height:260px!important}
+  .insight-sankey{height:230px!important}
+  .insight-sankey.expanded{height:286px!important}
   .calendar-cell{min-height:42px!important;padding:5px 4px!important}
   .calendar-amount{font-size:8px!important}
   .health-layout{gap:16px!important}
@@ -169,6 +185,9 @@ a:hover{color:#5DBE95}
 @media (min-width:721px){
   .app-tabs>div:first-child{display:none!important}
   .mobile-overview-mix{display:none!important}
+}
+@media (prefers-reduced-motion:reduce){
+  .insight-sankey,.insight-link,.insight-node-copy,.sankey-expand-action,.sankey-detail,.calendar-cell,.calendar-detail{transition-duration:.01ms!important;animation-duration:.01ms!important}
 }
 @media (max-width:480px){
   .app-brand{display:none!important}
@@ -735,17 +754,20 @@ a:hover{color:#5DBE95}
 
 <div class="insight-card insight-card-wide">
 <div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
-<div class="insight-sankey">
+<div class="insight-sankey {{ sankeyExpandedClass }}">
 <svg viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
 <sc-for list="{{ sankeyLinks }}" as="l" hint-placeholder-count="8"><path class="{{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
 <sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
 <rect class="insight-node" x="{{ sankeyHub.x }}" y="{{ sankeyHub.y }}" width="{{ sankeyHub.w }}" height="{{ sankeyHub.h }}" rx="2"></rect>
 <sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
 </svg>
-<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><div class="insight-node-copy" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
-<div class="insight-node-copy" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
-<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<div class="insight-node-copy" onClick="{{ sankeyHub.open }}" role="button" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
+<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 </div>
+<div class="sankey-hint">{{ sankeyHint }}</div>
+<sc-if value="{{ sankeyHasMore }}" hint-placeholder-val="{{ false }}"><div class="sankey-expand-action" onClick="{{ expandSankey }}">{{ sankeyExpandLabel }}</div></sc-if>
+<sc-if value="{{ sankeyOpen }}" hint-placeholder-val="{{ false }}"><div class="sankey-detail"><div class="sankey-detail-head"><span class="sankey-detail-name">{{ sankeyFocusName }}</span><span class="sankey-detail-close" onClick="{{ closeSankey }}">CLOSE ×</span></div><div class="sankey-detail-meta">{{ sankeyFocusMeta }}</div><div class="sankey-detail-value">{{ sankeyFocusValue }}</div><div class="sankey-detail-note">{{ sankeyFocusNote }}</div></div></sc-if>
 </div>
 
 <div class="insight-card">
@@ -762,8 +784,9 @@ a:hover{color:#5DBE95}
 <div class="insight-card-title"><span>Calendar spending</span><span>{{ calendarLabel }} · {{ calendarTotal }}</span></div>
 <div class="calendar-shell">
 <div class="calendar-weekdays"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
-<div class="calendar-grid"><sc-for list="{{ calendarCells }}" as="c" hint-placeholder-count="42"><div class="{{ c.cls }}" style="background:{{ c.bg }}" title="{{ c.title }}"><span class="calendar-day">{{ c.day }}</span><span class="calendar-amount">{{ c.amount }}</span></div></sc-for></div>
+<div class="calendar-grid"><sc-for list="{{ calendarCells }}" as="c" hint-placeholder-count="42"><div class="{{ c.cls }}" onClick="{{ c.open }}" style="background:{{ c.bg }}" title="{{ c.title }}" role="button"><span class="calendar-day">{{ c.day }}</span><span class="calendar-amount">{{ c.amount }}</span></div></sc-for></div>
 </div>
+<sc-if value="{{ calendarOpen }}" hint-placeholder-val="{{ false }}"><div class="calendar-detail"><div class="calendar-detail-head"><span class="calendar-detail-date">{{ calendarDetailDate }}</span><span class="calendar-detail-close" onClick="{{ closeCalendar }}">CLOSE ×</span></div><div class="calendar-detail-total">{{ calendarDetailTotal }}</div><div class="calendar-detail-meta">{{ calendarDetailCount }}</div><div class="calendar-detail-cats">{{ calendarDetailCategories }}</div></div></sc-if>
 </div>
 
 <div class="insight-card">
@@ -896,7 +919,7 @@ const seg = (v, w, h, lo, hi, i0) => {
 const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
 class Component extends DCLogic {
-  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null };
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null, sankeyOpen: false, sankeyFocus: null, calendarOpen: false, calendarDay: null };
 
   get d() { if (!this._d) this._d = this.build(); return this._d; }
   cur() { return this.props.currency ?? '£'; }
@@ -1127,7 +1150,12 @@ class Component extends DCLogic {
     const insightData = d.insights || {};
     const sankeyData = insightData.sankey || { sources: [], hub: { name: 'Money in', value: 0 }, uses: [] };
     const sankeySourcesRaw = sankeyData.sources || [], sankeyUsesRaw = sankeyData.uses || [];
-    const sankeyTotal = Number(sankeyData.hub?.value || 0);
+    const sankeyTotal = Number(sankeyData.hub?.value || 0), sankeyExpanded = Boolean(S.sankeyOpen);
+    const sankeyOther = sankeyUsesRaw.slice(3).reduce((sum, item) => sum + Number(item.value || 0), 0);
+    const sankeyDisplayRaw = sankeyExpanded || sankeyUsesRaw.length <= 4 ? sankeyUsesRaw : sankeyUsesRaw.slice(0, 3).concat([{ name: 'Other', value: sankeyOther, kind: 'other' }]);
+    const openSankey = item => () => this.setState({ sankeyOpen: true, sankeyFocus: item.name });
+    const expandSankey = () => this.setState({ sankeyOpen: true });
+    const closeSankey = () => this.setState({ sankeyOpen: false, sankeyFocus: null });
     const sankeyLayout = (items, x, total) => {
       const dense = items.length > 6, gap = dense ? 1 : 12, usable = dense ? 215 : 190;
       const minH = dense ? 19 : 24, maxH = dense ? 32 : 92;
@@ -1135,17 +1163,22 @@ class Component extends DCLogic {
       let y = dense ? 12 : 18;
       return items.map(item => {
         const value = Number(item.value || 0), h = Math.max(minH, Math.min(maxH, value * scale));
-        const node = { x, y, w: 170, h, cy: y + h / 2, left: x / 10, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend' };
+        const node = { x, y, w: 170, h, cy: y + h / 2, left: x / 10, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
         y += h + gap;
         return node;
       });
     };
     const sankeySources = sankeyLayout(sankeySourcesRaw, 20, sankeyTotal);
-    const sankeyUses = sankeyLayout(sankeyUsesRaw, 810, sankeyTotal);
-    const sankeyHub = { x: 405, y: 104, w: 190, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal) };
+    const sankeyUses = sankeyLayout(sankeyDisplayRaw, 810, sankeyTotal);
+    const sankeyHub = { x: 405, y: 104, w: 190, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
     const sankeyLinks = [];
     sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
     sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));
+    const sankeyFocusRaw = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal }, ...sankeyUsesRaw].find(item => item.name === S.sankeyFocus) || null;
+    const sankeyFocusValue = sankeyFocusRaw ? Number(sankeyFocusRaw.value || 0) : 0;
+    const sankeyFocusName = sankeyFocusRaw?.name || 'Select a flow';
+    const sankeyFocusMeta = sankeyFocusRaw?.name === (sankeyData.hub?.name || 'Money in') ? 'TOTAL INFLOW' : (sankeyFocusRaw?.kind === 'save' ? 'SAVING DESTINATION' : 'SPENDING DESTINATION');
+    const sankeyFocusNote = sankeyFocusRaw?.kind === 'other' ? 'This combines the remaining destinations. Tap SHOW ALL FLOWS to inspect each one.' : 'Tap another node to switch the detail view.';
 
     const dailyMap = {};
     (insightData.daily || []).forEach(row => { dailyMap[row.d] = Number(row.v || 0); });
@@ -1163,14 +1196,29 @@ class Component extends DCLogic {
       }
     }
     const calendarData = insightData.calendar || {}, calendarRaw = calendarData.days || [];
+    const transactionDetails = d.transactionDetails || [];
     const firstCalendarWeekday = calendarRaw.length ? Number(calendarRaw[0].weekday || 0) : 0;
-    const calendarCells = Array.from({ length: firstCalendarWeekday }, () => ({ empty: true, cls: 'calendar-cell empty', bg: 'transparent', day: '', amount: '' }));
+    const openCalendar = row => () => this.setState({ calendarOpen: true, calendarDay: row.d });
+    const calendarCells = Array.from({ length: firstCalendarWeekday }, () => ({ empty: true, cls: 'calendar-cell empty', bg: 'transparent', day: '', amount: '', open: () => {} }));
     calendarRaw.forEach(row => {
-      const value = Number(row.v || 0);
+      const value = Number(row.v || 0), selected = S.calendarDay === row.d;
       const today = row.d === (heatScale.end_date || '');
-      calendarCells.push({ day: row.day, amount: value ? this.m(value) : '—', title: row.d + ' · ' + this.m(value), bg: value ? heatColor(value) : '#101312', today, cls: 'calendar-cell' + (today ? ' today' : '') });
+      calendarCells.push({ day: row.day, amount: value ? this.m(value) : '—', title: row.d + ' · ' + this.m(value), bg: value ? heatColor(value) : '#101312', today, open: openCalendar(row), cls: 'calendar-cell' + (today ? ' today' : '') + (selected ? ' selected' : '') });
     });
+    const calendarSelectedRow = calendarRaw.find(row => row.d === S.calendarDay) || null;
+    const calendarDayTxns = calendarSelectedRow ? transactionDetails.filter(t => t.date === calendarSelectedRow.d && !['TRANSFER', 'ADJUSTMENT', 'INCOME'].includes(t.type)) : [];
+    const calendarCategoryTotals = {};
+    calendarDayTxns.forEach(t => {
+      const category = t.category || 'Uncategorised';
+      calendarCategoryTotals[category] = (calendarCategoryTotals[category] || 0) + Math.abs(Number(t.amount || 0));
+    });
+    const calendarCategorySummary = Object.entries(calendarCategoryTotals).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([name, amount]) => name + ' ' + this.m(amount, 2)).join(' · ');
     const calendarTotal = calendarRaw.reduce((sum, row) => sum + Number(row.v || 0), 0);
+    const calendarDetailDate = calendarSelectedRow ? calendarSelectedRow.d : '';
+    const calendarDetailTotal = calendarSelectedRow ? this.m(calendarSelectedRow.v) : '';
+    const calendarDetailCount = calendarSelectedRow ? calendarDayTxns.length + ' TRANSACTION' + (calendarDayTxns.length === 1 ? '' : 'S') : '';
+    const calendarDetailCategories = calendarSelectedRow ? (calendarCategorySummary || 'No category breakdown available for this day.') : '';
+    const closeCalendar = () => this.setState({ calendarOpen: false, calendarDay: null });
     const health = insightData.health || { score: 0, band: 'Building', components: [], note: '' };
     const healthScore = Number(health.score || 0), healthLabel = String(health.band || 'Building').toUpperCase();
     const healthComponents = (health.components || []).map(c => ({ name: c.name, value: Number(c.value || 0), detail: c.detail || '' }));
@@ -1281,8 +1329,14 @@ class Component extends DCLogic {
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
       sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
+      sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
+      sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',
+      sankeyFocusName, sankeyFocusMeta, sankeyFocusValue: this.m(sankeyFocusValue), sankeyFocusNote,
+      expandSankey, closeSankey,
       heatCells, heatScaleLabel: heatScale.start && heatScale.end_date ? heatScale.start + ' → ' + heatScale.end_date : 'LAST 12 MONTHS',
       calendarCells, calendarLabel: calendarData.label || 'CURRENT MONTH', calendarTotal: this.m(calendarTotal),
+      calendarOpen: Boolean(S.calendarOpen), calendarDetailDate, calendarDetailTotal, calendarDetailCount, calendarDetailCategories, closeCalendar,
       healthScore, healthBand: health.band || 'Building', healthLabel, healthComponents, healthNote: health.note || '',
       acctHead, acctGroups, compBars, compRows,
       netWorthBig: this.m(d.nw[35]), netWorthDelta: (d.netWorthDelta >= 0 ? '+' : '') + this.m(d.netWorthDelta) + ' · 30 DAYS',

@@ -51,3 +51,4 @@ jobs:
             exit 1
           fi
           npx --yes wrangler@4 pages deploy pages-deploy --project-name ynab-ledger-dashboard --branch main
+

@@ -297,6 +297,12 @@ def _template_model(data):
                        ["READY TO ASSIGN", float(meta.get("ready", 0)), "#656866"],
                        ["RUNWAY", f"{(liquid / avg_spend if avg_spend else 0):.1f} mo", "#3FA37A"]],
         "recentTxns": data.get("recent_transactions", []),
+        "insights": data.get("insights", {
+            "sankey": data.get("sankey", {"sources": [], "hub": {"name": "Money in", "value": 0}, "uses": []}),
+            "daily": data.get("daily", []), "heat_scale": data.get("heat_scale", {}),
+            "calendar": {"label": meta.get("last_month", "CURRENT"), "days": []},
+            "health": {"score": 0, "band": "Building", "components": [], "note": "Indicative score based on recent synced data."},
+        }),
         "transactionDetails": data.get("transaction_details", []),
         "transactionMonths": transaction_months,
         "txnHistoryNote": f"{len(data.get('transaction_details', []))} TRANSACTIONS · FULL SYNCED HISTORY",

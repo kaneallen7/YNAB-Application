@@ -13,18 +13,145 @@ html,body{margin:0;padding:0;background:#080909;-webkit-font-smoothing:antialias
 a{color:#3FA37A;text-decoration:none}
 a:hover{color:#5DBE95}
 ::selection{background:#3FA37A;color:#080909}
+.template-preview,.template-notes{display:none!important}
+.mobile-overview{display:none!important}
+.overview-mix{border-top:1px solid #1E201F;padding:22px 26px 26px}
+.overview-mix-layout{display:flex;align-items:center;gap:26px;margin-top:16px}
+.overview-mix-donut{width:164px;flex:0 0 164px}
+.overview-mix-legend{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 22px}
+.overview-mix-legend>div{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0}
+.overview-mix-segment{cursor:pointer;transition:opacity .16s ease}
+.overview-mix-card,.mobile-overview-mix-card{margin-top:18px;border:1px solid #2A2C2B;background:#0F1110;padding:15px 16px}
+.overview-mix-card-grid,.mobile-overview-mix-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:14px}
+.overview-mix-card-trend,.mobile-overview-mix-card-trend{margin-top:14px;padding-top:12px;border-top:1px solid #1E201F}
+.mobile-overview-mix{border-top:1px solid #1E201F;padding:18px 20px 22px}
+.mobile-overview-mix-layout{display:flex;align-items:center;gap:16px;margin-top:14px}
+.mobile-overview-mix-donut{width:132px;flex:0 0 132px}
+.mobile-overview-mix-legend{flex:1;display:grid;grid-template-columns:1fr;gap:8px;min-width:0}
+.mobile-overview-mix-card{margin-top:16px;padding:13px 14px}
+.mobile-overview-mix-card-grid{gap:10px;margin-top:12px}
+/* Keep the single-surface desktop composition intact while allowing every
+   production screen to reflow cleanly on a phone-sized viewport. */
+@media (max-width:720px){
+  html,body{overflow-x:hidden}
+  .app-shell{min-height:100vh!important}
+  .app-body{display:block!important;min-height:0!important}
+  .app-rail{display:none!important}
+  .app-main{width:100%!important}
+  .app-header{height:auto!important;min-height:52px!important;padding:0 14px!important;gap:10px!important}
+  .app-header-left{min-width:0!important;gap:12px!important;overflow:hidden!important}
+  .app-brand{flex:none!important}
+  .app-tabs{min-width:0!important;max-width:100%!important;overflow-x:auto!important;white-space:nowrap!important;scrollbar-width:none}
+  .app-tabs::-webkit-scrollbar{display:none}
+  .app-tabs>div{height:52px!important;padding:0 9px!important;font-size:11px!important}
+  .app-header-status{display:none!important}
+  .overview-kpis,.flow-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .overview-kpis>div,.flow-kpis>div{padding:15px 14px 14px!important}
+  .overview-kpis>div:last-child{grid-column:span 2}
+  .overview-kpis svg{width:58px!important}
+  .overview-kpis [style*="font:200 30px"]{font-size:24px!important}
+  .overview-chart-head{display:block!important;padding:18px 14px 0!important}
+  .overview-chart-head>div:last-child{margin-top:12px!important;width:max-content;max-width:100%;overflow-x:auto}
+  .overview-chart-wrap{padding:16px 14px 0!important}
+  .overview-chart{height:210px!important}
+  .overview-y-axis,.spending-y-axis{width:40px!important}
+  .overview-x-axis{padding:8px 14px 16px!important}
+  .overview-lower{display:block!important}
+  .budget-pane,.savings-pane{padding:18px 14px 20px!important;border-right:0!important}
+  .budget-pane{border-bottom:1px solid #1E201F}
+  .budget-table{overflow-x:auto!important}
+  .budget-table>div{min-width:470px!important}
+  .savings-content{display:block!important;margin-top:14px!important}
+  .savings-content>div+div{margin-top:18px!important}
+  .spending-head{display:block!important;padding:18px 14px!important}
+  .spending-head-left{display:grid!important;grid-template-columns:1fr 1fr!important;gap:14px!important}
+  .spending-head-left>div:nth-child(2){padding-left:14px!important}
+  .spending-head>div:last-child{text-align:left!important;margin-top:16px!important;font-size:9px!important}
+  .spending-chart-wrap{padding:18px 14px 20px!important}
+  .spending-chart{height:180px!important}
+  .spending-chart-title{gap:8px!important;flex-wrap:wrap!important}
+  .spending-table-wrap{padding:18px 14px 24px!important;overflow-x:auto!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+  .spending-grid{min-width:650px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]{min-width:650px!important}
+  .txn-overlay{left:12px!important;right:12px!important;width:auto!important;padding:14px!important}
+  .txn-overlay-row,.transaction-row{grid-template-columns:70px minmax(0,1fr) 78px!important;gap:8px!important}
+  .txn-overlay-row>:nth-child(3),.transaction-row>:nth-child(3){display:none!important}
+  .transactions-page{padding:18px 14px 24px!important}
+  .transactions-head{display:block!important;padding-bottom:14px!important}
+  .transactions-head>span{display:block!important;margin-top:10px!important;line-height:1.5!important}
+  .transactions-page .month-row{padding:14px 0!important}
+  .transactions-page .month-row>div:first-child{min-width:0!important;gap:8px!important;flex-wrap:wrap!important}
+  .transactions-page .month-row>div:last-child{gap:10px!important}
+  .flow-chart-wrap{padding:18px 14px 20px!important}
+  .flow-chart{height:210px!important}
+  .flow-chart>div{height:210px!important}
+  .flow-chart svg{height:210px!important}
+  .flow-table-wrap{padding:18px 14px 24px!important;overflow-x:auto!important}
+  .flow-table{min-width:620px!important}
+  .accounts-layout{display:block!important}
+  .accounts-pane{padding:18px 14px 20px!important;border-right:0!important;border-bottom:1px solid #1E201F;overflow-x:auto!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+  .accounts-table,.accounts-grid{min-width:540px!important}
+  .accounts-table{overflow:visible!important}
+  .accounts-grid>div:first-child{min-width:0!important}
+  .accounts-pane [style*="grid-template-columns"]{min-width:540px!important}
+  .composition-pane{padding:18px 14px 24px!important}
+  .template-preview,.template-notes{display:none!important}
+  .app-shell:has(.mobile-overview) .app-body{min-height:0!important}
+  .app-shell:has(.mobile-overview) .app-main{width:100%!important}
+  .overview-screen>.overview-desktop{display:none!important}
+  .mobile-overview{display:block!important}
+  .overview-mix{display:none!important}
+  .mobile-overview-mix{display:block!important}
+  .app-tabs>div:nth-child(2){display:none!important}
+}
+@media (min-width:721px){
+  .app-tabs>div:first-child{display:none!important}
+  .mobile-overview-mix{display:none!important}
+}
+@media (max-width:480px){
+  .app-brand{display:none!important}
+  .app-header-left{gap:0!important}
+  .app-tabs>div{padding:0 8px!important;font-size:10.5px!important}
+  .overview-kpis>div,.flow-kpis>div{padding:14px 12px!important}
+  .overview-kpis [style*="font:200 30px"]{font-size:22px!important}
+  .overview-chart{height:190px!important}
+  .spending-chart{height:165px!important}
+  /* Keep every spending field visible on a phone. The desktop table remains
+     six columns wide; on a narrow screen the same fields use compact tracks
+     instead of falling off the right edge of the viewport. */
+  .spending-table-wrap{overflow-x:hidden!important;padding-left:14px!important;padding-right:14px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]{width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1.9fr) 40px 40px 46px 28px 48px!important;gap:4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child{min-width:0!important;overflow:hidden;flex-wrap:wrap!important;gap:4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child>span:nth-of-type(2){min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:first-child>span:nth-of-type(3){flex:none!important;white-space:nowrap!important;font-size:8px!important;padding:2px 4px!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:not(:first-child){min-width:0!important;overflow:hidden}
+  .spending-table-wrap>div[style*="grid-template-columns"]>div:not(:first-child)[style*="font:500 9px"]{font-size:8px!important;line-height:1.1!important;letter-spacing:.04em!important;overflow-wrap:anywhere!important}
+  .spending-table-wrap>div[style*="grid-template-columns"]:first-of-type>div{font-size:7.5px!important;line-height:1.1!important;letter-spacing:.03em!important;white-space:normal!important;word-break:break-word!important;text-align:center!important}
+  .spending-table-wrap>div[style*="grid-template-columns"] svg{width:48px!important;height:16px!important}
+  /* Accounts use the same four fields on mobile, but in compact tracks so
+     the page remains fully readable without a horizontal scroll gesture. */
+  .accounts-pane{overflow-x:hidden!important}
+  .accounts-pane > div{padding-left:0!important;padding-right:0!important}
+  .accounts-table,.accounts-grid,.accounts-pane [style*="grid-template-columns"]{width:100%!important;min-width:0!important;grid-template-columns:minmax(0,1fr) 68px 72px 58px!important;gap:6px!important}
+  .accounts-pane [style*="grid-template-columns"]>div:first-child{min-width:0!important;overflow:hidden}
+  .accounts-pane [style*="grid-template-columns"]>div:first-child>div:first-child{white-space:normal!important;overflow-wrap:anywhere!important;line-height:1.15!important}
+  .accounts-pane [style*="grid-template-columns"]>div:not(:first-child){min-width:0!important;overflow:hidden}
+  .accounts-pane [style*="grid-template-columns"] svg{width:68px!important;height:18px!important}
+  .accounts-pane [style*="grid-template-columns"]:first-of-type>div{font-size:7.5px!important;line-height:1.1!important;letter-spacing:.03em!important;white-space:normal!important;word-break:break-word!important;text-align:center!important}
+  .accounts-pane [style*="grid-template-columns"] [style*="font:300 15px"]{font-size:13px!important}
+}
 </style></helmet>
-<div style="min-height:100vh;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
+<div class="app-shell" style="min-height:100vh;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
 
-<div style="display:flex;align-items:stretch;min-height:920px">
+<div class="app-body" style="display:flex;align-items:stretch;min-height:920px">
 
 <sc-if value="{{ isRail }}" hint-placeholder-val="{{ false }}">
-<div style="width:186px;flex:none;border-right:1px solid #1E201F;display:flex;flex-direction:column;padding:18px 0 0">
+<div class="app-rail" style="width:186px;flex:none;border-right:1px solid #1E201F;display:flex;flex-direction:column;padding:18px 0 0">
 <div style="padding:0 18px 20px;border-bottom:1px solid #1E201F">
 <div style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em;color:#E8E7E3">LEDGER</div>
 <div style="margin-top:7px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">PERSONAL · 2026</div>
 </div>
-<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
 <div onClick="{{ n.go }}" style="padding:11px 18px;cursor:pointer;border-bottom:1px solid #141615;display:flex;align-items:center;justify-content:space-between;color:{{ n.col }}" style-hover="color:#E8E7E3">
 <span style="font:400 12.5px/1 'IBM Plex Sans'">{{ n.label }}</span>
 <span style="width:2px;height:12px;background:{{ n.mark }}"></span>
@@ -37,19 +164,19 @@ a:hover{color:#5DBE95}
 </div>
 </sc-if>
 
-<div style="flex:1;min-width:0;display:flex;flex-direction:column">
+<div class="app-main" style="flex:1;min-width:0;display:flex;flex-direction:column">
 
-<div style="display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:52px;border-bottom:1px solid #1E201F">
-<div style="display:flex;align-items:center;gap:26px;min-width:0">
+<div class="app-header" style="display:flex;align-items:center;justify-content:space-between;padding:0 26px;height:52px;border-bottom:1px solid #1E201F">
+<div class="app-header-left" style="display:flex;align-items:center;gap:26px;min-width:0">
 <sc-if value="{{ isTabs }}" hint-placeholder-val="{{ true }}">
-<div style="display:flex;align-items:baseline;gap:9px">
+<div class="app-brand" style="display:flex;align-items:baseline;gap:9px">
 <span style="font:500 12px/1 'IBM Plex Mono',monospace;letter-spacing:.14em">LEDGER</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">PERSONAL</span>
 </div>
 </sc-if>
 <sc-if value="{{ isTabs }}" hint-placeholder-val="{{ true }}">
-<div style="display:flex;align-items:center;gap:2px;align-self:stretch">
-<sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+<div class="app-tabs" style="display:flex;align-items:center;gap:2px;align-self:stretch">
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
 <div onClick="{{ n.go }}" style="height:52px;display:flex;align-items:center;padding:0 13px;cursor:pointer;font:400 12.5px/1 'IBM Plex Sans';color:{{ n.col }};box-shadow:inset 0 -1px 0 {{ n.mark }}" style-hover="color:#E8E7E3">{{ n.label }}</div>
 </sc-for>
 </div>
@@ -58,7 +185,7 @@ a:hover{color:#5DBE95}
 <div style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">{{ screenTitle }}</div>
 </sc-if>
 </div>
-<div style="display:flex;align-items:center;gap:0">
+<div class="app-header-status" style="display:flex;align-items:center;gap:0">
 <div style="display:flex;align-items:center;gap:14px;padding-right:16px;border-right:1px solid #1E201F">
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">AUG 2026</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#4E514F">DAY 9 / 31</span>
@@ -72,8 +199,9 @@ a:hover{color:#5DBE95}
 
 <!-- ══ OVERVIEW ══ -->
 <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
-<div>
-<div style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #1E201F">
+<div class="overview-screen">
+<div class="overview-desktop">
+<div class="overview-kpis" style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid #1E201F">
 <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
 <div style="padding:20px 22px 18px;border-left:{{ k.bl }}">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
@@ -89,10 +217,10 @@ a:hover{color:#5DBE95}
 </div>
 
 <div style="border-bottom:1px solid #1E201F">
-<div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 0">
+<div class="overview-chart-head" style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 0">
 <div style="display:flex;align-items:baseline;gap:16px">
 <span style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">Net worth</span>
-<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">36 MONTHS · GBP · MONTH END</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ nwSubtitle }}</span>
 </div>
 <div style="display:flex;gap:0;border:1px solid #1E201F">
 <sc-for list="{{ ranges }}" as="r" hint-placeholder-count="4">
@@ -101,13 +229,13 @@ a:hover{color:#5DBE95}
 </div>
 </div>
 
-<div style="display:flex;padding:18px 26px 0">
-<div style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:268px;padding-bottom:1px">
+<div class="overview-chart-wrap" style="display:flex;padding:18px 26px 0">
+<div class="overview-y-axis" style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:268px;padding-bottom:1px">
 <sc-for list="{{ nwYLabels }}" as="l" hint-placeholder-count="5">
 <div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;text-align:right;padding-right:12px">{{ l.t }}</div>
 </sc-for>
 </div>
-<div onMouseMove="{{ onChartMove }}" onMouseLeave="{{ onChartLeave }}" style="flex:1;min-width:0;position:relative;height:268px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B;cursor:crosshair">
+<div class="overview-chart" onMouseMove="{{ onChartMove }}" onMouseLeave="{{ onChartLeave }}" style="flex:1;min-width:0;position:relative;height:268px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B;cursor:crosshair">
 <svg width="100%" height="100%" viewBox="0 0 1000 268" preserveAspectRatio="none" fill="none" style="display:block">
 <sc-for list="{{ nwGrid }}" as="g" hint-placeholder-count="5">
 <line x1="0" y1="{{ g.y }}" x2="1000" y2="{{ g.y }}" stroke="#171918" stroke-width="1" vector-effect="non-scaling-stroke"></line>
@@ -134,7 +262,7 @@ a:hover{color:#5DBE95}
 <div style="position:absolute;right:8px;top:{{ lblLiab }};font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#555856;pointer-events:none">LIABILITIES</div>
 </div>
 </div>
-<div style="display:flex;padding:9px 26px 20px">
+<div class="overview-x-axis" style="display:flex;padding:9px 26px 20px">
 <div style="width:64px;flex:none"></div>
 <div style="flex:1;display:flex;justify-content:space-between">
 <sc-for list="{{ nwXLabels }}" as="x" hint-placeholder-count="7">
@@ -144,13 +272,13 @@ a:hover{color:#5DBE95}
 </div>
 </div>
 
-<div style="display:flex;align-items:stretch">
-<div style="flex:1.55;min-width:0;padding:22px 26px 26px;border-right:1px solid #1E201F">
+<div class="overview-lower" style="display:flex;align-items:stretch">
+<div class="budget-pane" style="flex:1.55;min-width:0;padding:22px 26px 26px;border-right:1px solid #1E201F">
 <div style="display:flex;align-items:baseline;justify-content:space-between">
 <span style="font:400 13px/1 'IBM Plex Sans'">Budget vs actual</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">29% OF MONTH ELAPSED</span>
 </div>
-<div style="margin-top:16px;border-top:1px solid #1E201F">
+<div class="budget-table" style="margin-top:16px;border-top:1px solid #1E201F">
 <sc-for list="{{ budgetRows }}" as="b" hint-placeholder-count="6">
 <div style="display:grid;grid-template-columns:1fr 96px 96px 110px;align-items:center;gap:14px;padding:11px 0 10px;border-bottom:1px solid #171918">
 <div>
@@ -167,9 +295,9 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 </div>
-<div style="flex:1;min-width:0;padding:22px 26px 26px">
+<div class="savings-pane" style="flex:1;min-width:0;padding:22px 26px 26px">
 <div style="font:400 13px/1 'IBM Plex Sans'">Savings rate &amp; runway</div>
-<div style="margin-top:20px;display:flex;align-items:flex-start;gap:24px">
+<div class="savings-content" style="margin-top:20px;display:flex;align-items:flex-start;gap:24px">
 <div style="flex:1;min-width:0">
 <div style="display:flex;align-items:flex-end;gap:5px;height:78px">
 <sc-for list="{{ srBars }}" as="s" hint-placeholder-count="18">
@@ -189,30 +317,124 @@ a:hover{color:#5DBE95}
 </div>
 </div>
 </div>
-<div style="padding:22px 26px 26px;border-top:1px solid #1E201F">
-<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C;margin-bottom:3px">ALL CATEGORIES</div>
-<sc-for list="{{ budgetAllRows }}" as="b" hint-placeholder-count="12">
-<div style="display:grid;grid-template-columns:1fr 96px 96px 110px;align-items:center;gap:14px;padding:11px 0 10px;border-bottom:1px solid #171918">
-<div>
-<div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ b.name }}</div>
-<div style="margin-top:8px;height:2px;background:#1A1C1B;position:relative">
-<div style="position:absolute;left:0;top:0;bottom:0;width:{{ b.pct }}%;background:{{ b.bar }}"></div>
-<div style="position:absolute;top:-3px;bottom:-3px;left:29%;width:1px;background:#34372F"></div>
+</div>
+<div class="overview-mix">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 13px/1 'IBM Plex Sans'">Spending mix</span>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">THIS MONTH Â· {{ mixTotal }}</span>
+</div>
+<div class="overview-mix-layout">
+<div class="overview-mix-donut" onClick="{{ openMix }}" style="cursor:pointer">
+<svg viewBox="0 0 164 164" role="img" aria-label="Current month spending mix" style="display:block;width:100%;height:auto">
+<circle cx="82" cy="82" r="54" fill="none" stroke="#171918" stroke-width="18"></circle>
+<g transform="rotate(-90 82 82)">
+<sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
+<circle class="overview-mix-segment" onClick="{{ m.open }}" cx="82" cy="82" r="54" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="18" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}" opacity="{{ m.opacity }}"></circle>
+</sc-for>
+</g>
+<text x="82" y="78" text-anchor="middle" style="font:400 9px 'IBM Plex Mono';letter-spacing:.08em;fill:#6E706D">SPENT</text>
+<text x="82" y="96" text-anchor="middle" style="font:300 16px 'IBM Plex Sans';fill:#E8E7E3">{{ mixTotal }}</text>
+</svg>
+</div>
+<div class="overview-mix-legend">
+<sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
+<div onClick="{{ m.open }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;cursor:pointer;opacity:{{ m.opacity }}"><span style="display:flex;align-items:center;gap:9px;min-width:0"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 11.5px/1 'IBM Plex Sans';color:{{ m.textCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 11.5px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
+</sc-for>
 </div>
 </div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ b.budgeted }}</div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ b.spent }}</div>
-<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ b.remCol }}">{{ b.remaining }}</div>
+<sc-if value="{{ mixOpen }}" hint-placeholder-val="{{ false }}">
+<div class="overview-mix-card">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px"><span style="font:400 12px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.name }}</span><span onClick="{{ closeMix }}" style="font:400 9px/1 'IBM Plex Mono';letter-spacing:.08em;color:#6E706D;cursor:pointer">CLOSE Ã—</span></div>
+<div class="overview-mix-card-grid">
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">SPENT</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.spent }}</div></div>
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">BUDGETED</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.budgeted }}</div></div>
+<div><div style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">REMAINING</div><div style="margin-top:7px;font:300 16px/1 'IBM Plex Sans';color:{{ mixDetail.remCol }}">{{ mixDetail.remaining }}</div></div>
+</div>
+<div class="overview-mix-card-trend"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:500 8px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">18-MONTH TREND</span><span style="font:400 9px/1 'IBM Plex Mono';color:{{ mixDetail.color }}">{{ mixDetail.status }}</span></div><svg viewBox="0 0 280 42" preserveAspectRatio="none" style="display:block;width:100%;height:42px;margin-top:9px"><path d="{{ mixDetail.trend }}" fill="none" stroke="{{ mixDetail.color }}" stroke-width="1.4" vector-effect="non-scaling-stroke"></path></svg><div style="display:flex;justify-content:space-between;font:400 8px/1 'IBM Plex Mono';color:#4E514F"><span>{{ mixDetail.start }}</span><span>{{ mixDetail.end }}</span><span>{{ mixDetail.txns }}</span></div></div>
+</div>
+</sc-if>
+</div>
+<div class="mobile-overview" style="display:none;background:#0A0B0B;color:#E8E7E3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-weight:300">
+<div style="padding:18px 20px 16px;border-bottom:1px solid #1E201F;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:500 11px/1 'IBM Plex Mono',monospace;letter-spacing:.14em">LEDGER</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ mobilePeriod }}</span>
+</div>
+<div style="padding:26px 20px 22px;border-bottom:1px solid #1E201F">
+<div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">NET WORTH</div>
+<div style="margin-top:12px;font:200 42px/1 'IBM Plex Sans';letter-spacing:-.025em;font-variant-numeric:tabular-nums">{{ netWorthBig }}</div>
+<div style="margin-top:10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+<span style="font:400 10px/1 'IBM Plex Mono',monospace;color:#3FA37A">{{ netWorthDelta }}</span>
+<svg width="120" height="26" viewBox="0 0 120 26" fill="none" style="display:block;max-width:42%"><path d="{{ mobileSpark }}" stroke="#3FA37A" stroke-width="1" vector-effect="non-scaling-stroke"></path></svg>
+</div>
+</div>
+<div class="mobile-overview-kpis" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #1E201F">
+<sc-for list="{{ mobileKpis }}" as="k" hint-placeholder-count="4">
+<div style="padding:16px 20px;border-left:{{ k.bl }};border-bottom:1px solid #171918">
+<div style="font:500 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
+<div style="margin-top:9px;font:300 20px/1 'IBM Plex Sans';font-variant-numeric:tabular-nums;color:{{ k.vcol }}">{{ k.value }}</div>
 </div>
 </sc-for>
+</div>
+<div style="padding:18px 20px 8px;display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12px/1 'IBM Plex Sans'">Top categories</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SPENT / BUDGET</span>
+</div>
+<div class="mobile-overview-cats" style="padding:0 20px">
+<sc-for list="{{ mobileCats }}" as="c" hint-placeholder-count="6">
+<div style="padding:12px 0;border-bottom:1px solid #171918">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+<span style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD;min-width:0">{{ c.name }}</span>
+<span style="font:400 11px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88;white-space:nowrap">{{ c.pair }}</span>
+</div>
+<div style="margin-top:9px;height:2px;background:#1A1C1B;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:{{ c.pct }}%;background:{{ c.bar }}"></div></div>
+</div>
+</sc-for>
+</div>
+<div class="mobile-overview-mix">
+<div style="display:flex;align-items:baseline;justify-content:space-between">
+<span style="font:400 12px/1 'IBM Plex Sans'">Spending mix</span>
+<span style="font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ mixTotal }}</span>
+</div>
+<div class="mobile-overview-mix-layout">
+<div class="mobile-overview-mix-donut" onClick="{{ openMix }}" style="cursor:pointer">
+<svg viewBox="0 0 132 132" role="img" aria-label="Current month spending mix" style="display:block;width:100%;height:auto">
+<circle cx="66" cy="66" r="44" fill="none" stroke="#171918" stroke-width="15"></circle>
+<g transform="rotate(-90 66 66)">
+<sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
+<circle class="overview-mix-segment" onClick="{{ m.open }}" cx="66" cy="66" r="44" pathLength="100" fill="none" stroke="{{ m.c }}" stroke-width="15" stroke-linecap="butt" stroke-dasharray="{{ m.dash }}" stroke-dashoffset="{{ m.offset }}" opacity="{{ m.opacity }}"></circle>
+</sc-for>
+</g>
+<text x="66" y="63" text-anchor="middle" style="font:400 8px 'IBM Plex Mono';letter-spacing:.08em;fill:#6E706D">SPENT</text>
+<text x="66" y="79" text-anchor="middle" style="font:300 14px 'IBM Plex Sans';fill:#E8E7E3">{{ mixTotal }}</text>
+</svg>
+</div>
+<div class="mobile-overview-mix-legend">
+<sc-for list="{{ mixSegments }}" as="m" hint-placeholder-count="6">
+<div onClick="{{ m.open }}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;cursor:pointer;opacity:{{ m.opacity }}"><span style="display:flex;align-items:center;gap:7px;min-width:0"><span style="width:5px;height:5px;border-radius:50%;background:{{ m.c }};flex:none"></span><span style="font:400 10.5px/1 'IBM Plex Sans';color:{{ m.textCol }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.name }}</span></span><span style="font:400 10px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap">{{ m.spent }}</span></div>
+</sc-for>
+</div>
+</div>
+<sc-if value="{{ mixOpen }}" hint-placeholder-val="{{ false }}">
+<div class="mobile-overview-mix-card">
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px"><span style="font:400 11px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.name }}</span><span onClick="{{ closeMix }}" style="font:400 8px/1 'IBM Plex Mono';letter-spacing:.08em;color:#6E706D;cursor:pointer">CLOSE Ã—</span></div>
+<div class="mobile-overview-mix-card-grid">
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">SPENT</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.spent }}</div></div>
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">BUDGETED</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:#E8E7E3">{{ mixDetail.budgeted }}</div></div>
+<div><div style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">REMAINING</div><div style="margin-top:6px;font:300 14px/1 'IBM Plex Sans';color:{{ mixDetail.remCol }}">{{ mixDetail.remaining }}</div></div>
+</div>
+<div class="mobile-overview-mix-card-trend"><div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font:500 7.5px/1 'IBM Plex Mono';letter-spacing:.1em;color:#6E706D">18-MONTH TREND</span><span style="font:400 8px/1 'IBM Plex Mono';color:{{ mixDetail.color }}">{{ mixDetail.status }}</span></div><svg viewBox="0 0 280 42" preserveAspectRatio="none" style="display:block;width:100%;height:42px;margin-top:8px"><path d="{{ mixDetail.trend }}" fill="none" stroke="{{ mixDetail.color }}" stroke-width="1.3" vector-effect="non-scaling-stroke"></path></svg><div style="display:flex;justify-content:space-between;font:400 7.5px/1 'IBM Plex Mono';color:#4E514F"><span>{{ mixDetail.start }}</span><span>{{ mixDetail.end }}</span><span>{{ mixDetail.txns }}</span></div></div>
+</div>
+</sc-if>
+</div>
+</div>
 </div>
 </sc-if>
 
 <!-- ══ SPENDING ══ -->
 <sc-if value="{{ isSpending }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;flex-direction:column">
-<div style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 20px;border-bottom:1px solid #1E201F">
-<div style="display:flex;align-items:baseline;gap:28px">
+<div class="spending-page" style="display:flex;flex-direction:column;position:relative">
+<div class="spending-head" style="display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px 20px;border-bottom:1px solid #1E201F">
+<div class="spending-head-left" style="display:flex;align-items:baseline;gap:28px">
 <div>
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">SPENT THIS MONTH</div>
 <div style="margin-top:12px;font:200 34px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums">{{ spendTotal }}</div>
@@ -222,23 +444,23 @@ a:hover{color:#5DBE95}
 <div style="margin-top:12px;font:200 34px/1 'IBM Plex Sans';letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:#656866">{{ spendPrev }}</div>
 </div>
 </div>
-<div style="font:400 10.5px/1.7 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C;text-align:right">SELECTED · {{ selCat }}<br><span style="color:#3FA37A">{{ selCatSub }}</span></div>
+<div style="font:400 10.5px/1.7 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C;text-align:right">SELECTED · {{ selCat }}<br><span style="color:#3FA37A">{{ selCatSub }}</span><br><span style="color:#8A8B88">MOVED OUT {{ selCatMoved }}</span><br><span onClick="{{ openTxnDrawer }}" style="display:inline-block;margin-top:7px;padding:5px 7px;border:1px solid #3A3D3B;color:#D2D1CD;cursor:pointer">VIEW {{ selTxnsNote }}</span></div>
 </div>
 
 <div style="display:flex;flex-direction:column">
 
-<div style="order:{{ chartOrder }};padding:22px 26px 24px;border-bottom:1px solid #1E201F">
-<div style="display:flex;align-items:baseline;justify-content:space-between">
+<div class="spending-chart-wrap" style="order:{{ chartOrder }};padding:22px 26px 24px;border-bottom:1px solid #1E201F">
+<div class="spending-chart-title" style="display:flex;align-items:baseline;justify-content:space-between">
 <span style="font:400 13px/1 'IBM Plex Sans'">{{ selCat }} · 18 months</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SELECTED SERIES IN ACCENT · OTHERS NEUTRAL</span>
 </div>
 <div style="display:flex;margin-top:16px">
-<div style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:210px">
+<div class="spending-y-axis" style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:210px">
 <sc-for list="{{ catYLabels }}" as="l" hint-placeholder-count="4">
 <div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;text-align:right;padding-right:12px">{{ l.t }}</div>
 </sc-for>
 </div>
-<div style="flex:1;min-width:0;height:210px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B">
+<div class="spending-chart" style="flex:1;min-width:0;height:210px;border-left:1px solid #1E201F;border-bottom:1px solid #2A2C2B">
 <svg width="100%" height="100%" viewBox="0 0 1000 210" preserveAspectRatio="none" fill="none" style="display:block">
 <sc-for list="{{ catGrid }}" as="g" hint-placeholder-count="4">
 <line x1="0" y1="{{ g.y }}" x2="1000" y2="{{ g.y }}" stroke="#171918" stroke-width="1" vector-effect="non-scaling-stroke"></line>
@@ -258,15 +480,15 @@ a:hover{color:#5DBE95}
 </div></div>
 </div>
 
-<div style="order:{{ tableOrder }};padding:22px 26px 30px">
-<div style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
+<div class="spending-table-wrap" style="order:{{ tableOrder }};padding:22px 26px 30px">
+<div class="spending-grid" style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
 <sc-for list="{{ catHead }}" as="h" hint-placeholder-count="6">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
 </sc-for>
 </div>
 <sc-for list="{{ cats }}" as="c" hint-placeholder-count="12">
-<div onClick="{{ c.go }}" style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ c.bg }}" style-hover="background:#111312">
-<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:11px;background:{{ c.mark }}"></span><span style="font:400 12.5px/1 'IBM Plex Sans';color:{{ c.col }}">{{ c.name }}</span></div>
+<div class="spending-grid" onClick="{{ c.go }}" style="display:grid;grid-template-columns:1fr 92px 92px 92px 88px 130px;gap:16px;align-items:center;padding:10px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ c.bg }}" style-hover="background:#111312">
+<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:11px;background:{{ c.mark }}"></span><span style="font:400 12.5px/1 'IBM Plex Sans';color:{{ c.col }}">{{ c.name }}</span><span onClick="{{ c.open }}" style="font:400 9px/1 'IBM Plex Mono',monospace;color:{{ c.txnCol }};cursor:pointer;padding:3px 5px;border:1px solid #2A2C2B">{{ c.txnLabel }}</span></div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#5C5E5C">{{ c.budgeted }}</div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#D2D1CD">{{ c.spent }}</div>
 <div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:{{ c.remCol }}">{{ c.remaining }}</div>
@@ -278,14 +500,59 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 
+<sc-if value="{{ showTxnDrawer }}" hint-placeholder-val="{{ false }}">
+<div class="txn-overlay" style="position:absolute;z-index:30;right:26px;top:{{ txnTop }};width:min(620px,calc(100% - 52px));padding:18px 20px 20px;background:#0F1110;border:1px solid #3A3D3B;box-shadow:0 16px 36px rgba(0,0,0,.42)">
+<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px">
+<span style="font:400 13px/1 'IBM Plex Sans'">Transactions · {{ selCat }}</span>
+<div style="display:flex;align-items:center;gap:14px"><span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">{{ selTxnsNote }}</span><span onClick="{{ closeTxnDrawer }}" style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#8A8B88;cursor:pointer">CLOSE ×</span></div>
 </div>
+<sc-for list="{{ selTxns }}" as="t" hint-placeholder-count="6">
+<div class="txn-overlay-row" style="display:grid;grid-template-columns:94px 1fr 150px 92px;gap:14px;align-items:baseline;padding:9px 0;border-bottom:1px solid #171918">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ t.date }}</div>
+<div><div style="font:400 11.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ t.payee }}</div><div style="margin-top:4px;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ t.account }}</div></div>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.memo }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;color:{{ t.col }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+
+<!-- ══ TRANSACTIONS ══ -->
+<sc-if value="{{ isTransactions }}" hint-placeholder-val="{{ false }}">
+<div class="transactions-page" style="padding:22px 26px 30px">
+<div class="transactions-head" style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid #1E201F">
+<div><span style="font:400 13px/1 'IBM Plex Sans'">Transaction history</span><div style="margin-top:8px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">ALL CATEGORIES · {{ txnHistoryNote }}</div></div>
+<span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">NET ACTIVITY · TRANSFERS / ADJUSTMENTS EXCLUDED</span>
+</div>
+<sc-for list="{{ transactionMonths }}" as="m" hint-placeholder-count="12">
+<div class="month-row" onClick="{{ m.toggle }}" style="display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid #171918;cursor:pointer;background:{{ m.bg }}">
+<div style="display:flex;align-items:baseline;gap:16px"><span style="font:400 12.5px/1 'IBM Plex Mono',monospace;color:#D2D1CD">{{ m.label }}</span><span style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ m.count }} TRANSACTIONS</span></div>
+<div style="display:flex;align-items:center;gap:18px"><span style="font:400 12px/1 'IBM Plex Mono',monospace;color:#D2D1CD">{{ m.total }}</span><span style="font:400 13px/1 'IBM Plex Mono',monospace;color:#8A8B88">{{ m.chevron }}</span></div>
+</div>
+<sc-if value="{{ m.isOpen }}" hint-placeholder-val="{{ false }}">
+<div style="padding:0 0 8px;border-bottom:1px solid #3A3D3B">
+<sc-for list="{{ m.rows }}" as="t" hint-placeholder-count="12">
+<div class="transaction-row" style="display:grid;grid-template-columns:94px 1fr 150px 92px;gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid #171918">
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#5C5E5C">{{ t.date }}</div>
+<div><div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD">{{ t.payee }}</div><div style="margin-top:5px;font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F">{{ t.account }} · {{ t.category }}</div></div>
+<div style="font:400 9.5px/1 'IBM Plex Mono',monospace;color:#4E514F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.memo }}</div>
+<div style="text-align:right;font:400 11.5px/1 'IBM Plex Mono',monospace;color:{{ t.col }}">{{ t.amount }}</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</sc-for>
 </div>
 </sc-if>
 
 <!-- ══ CASH FLOW ══ -->
 <sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
 <div>
-<div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1E201F">
+<div class="flow-kpis" style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #1E201F">
 <sc-for list="{{ flowKpis }}" as="k" hint-placeholder-count="4">
 <div style="padding:20px 22px 18px;border-left:{{ k.bl }}">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">{{ k.label }}</div>
@@ -295,14 +562,14 @@ a:hover{color:#5DBE95}
 </sc-for>
 </div>
 
-<div style="padding:24px 26px 26px;border-bottom:1px solid #1E201F">
+<div class="flow-chart-wrap" style="padding:24px 26px 26px;border-bottom:1px solid #1E201F">
 <div style="display:flex;align-items:baseline;justify-content:space-between">
 <span style="font:400 13px/1 'IBM Plex Sans'">Inflow, outflow, net</span>
 <div style="display:flex;gap:20px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em">
 <span style="color:#656866">▲ INFLOW</span><span style="color:#4A4D4B">▼ OUTFLOW</span><span style="color:#3FA37A">— NET</span>
 </div>
 </div>
-<div style="margin-top:22px;position:relative;height:230px">
+<div class="flow-chart" style="margin-top:22px;position:relative;height:230px">
 <div style="display:flex;gap:4px;height:230px;align-items:stretch">
 <sc-for list="{{ flowBars }}" as="f" hint-placeholder-count="24">
 <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
@@ -321,7 +588,7 @@ a:hover{color:#5DBE95}
 </div>
 </div>
 
-<div style="padding:22px 26px 30px">
+<div class="flow-table-wrap" style="padding:22px 26px 30px">
 <div style="display:grid;grid-template-columns:120px 1fr 1fr 1fr 1fr;gap:16px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
 <sc-for list="{{ flowHead }}" as="h" hint-placeholder-count="5">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
@@ -342,21 +609,21 @@ a:hover{color:#5DBE95}
 
 <!-- ══ ACCOUNTS ══ -->
 <sc-if value="{{ isAccounts }}" hint-placeholder-val="{{ false }}">
-<div style="display:flex;align-items:stretch">
-<div style="flex:1.9;min-width:0;border-right:1px solid #1E201F">
+<div class="accounts-layout" style="display:flex;align-items:stretch">
+<div class="accounts-pane" style="flex:1.9;min-width:0;border-right:1px solid #1E201F">
 <sc-for list="{{ acctGroups }}" as="g" hint-placeholder-count="2">
 <div style="padding:22px 26px 24px;border-bottom:1px solid #1E201F">
 <div style="display:flex;align-items:baseline;justify-content:space-between">
 <span style="font:400 13px/1 'IBM Plex Sans'">{{ g.title }}</span>
 <span style="font:400 11px/1 'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;color:#8A8B88">{{ g.total }}</span>
 </div>
-<div style="margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
+<div class="accounts-grid accounts-table" style="margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;padding-bottom:9px;border-bottom:1px solid #2A2C2B">
 <sc-for list="{{ acctHead }}" as="h" hint-placeholder-count="4">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D;text-align:{{ h.a }}">{{ h.t }}</div>
 </sc-for>
 </div>
 <sc-for list="{{ g.rows }}" as="a" hint-placeholder-count="4">
-<div style="display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #171918">
+<div class="accounts-grid" style="display:grid;grid-template-columns:minmax(0,1fr) 110px 128px 96px;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #171918">
 <div>
 <div style="font:400 12.5px/1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap">{{ a.name }}</div>
 <div style="margin-top:6px;font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#4E514F;white-space:nowrap">{{ a.type }}</div>
@@ -371,7 +638,7 @@ a:hover{color:#5DBE95}
 </div>
 </sc-for>
 </div>
-<div style="flex:1;min-width:0;padding:22px 26px 26px">
+<div class="composition-pane" style="flex:1;min-width:0;padding:22px 26px 26px">
 <div style="font:400 13px/1 'IBM Plex Sans'">Composition</div>
 <div style="margin-top:20px;display:flex;height:6px;gap:1px">
 <sc-for list="{{ compBars }}" as="c" hint-placeholder-count="5">
@@ -399,7 +666,7 @@ a:hover{color:#5DBE95}
 </div>
 
 <!-- ══ MOBILE ══ -->
-<div style="border-top:1px solid #1E201F;padding:34px 26px 46px">
+<div class="template-preview" style="border-top:1px solid #1E201F;padding:34px 26px 46px">
 <div style="display:flex;align-items:baseline;gap:16px">
 <span style="font:400 13px/1 'IBM Plex Sans'">Mobile</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SAME SYSTEM · ONE COLUMN · SPARKLINES CARRY THE TREND</span>
@@ -482,7 +749,7 @@ a:hover{color:#5DBE95}
 </div>
 
 <!-- ══ NOTES ══ -->
-<div style="border-top:1px solid #1E201F;padding:30px 26px 60px;max-width:1100px">
+<div class="template-notes" style="border-top:1px solid #1E201F;padding:30px 26px 60px;max-width:1100px">
 <div style="font:500 9px/1 'IBM Plex Mono',monospace;letter-spacing:.11em;color:#6E706D">ASSUMPTIONS &amp; REASONING</div>
 <div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid #1E201F">
 <sc-for list="{{ notes }}" as="n" hint-placeholder-count="6">
@@ -512,7 +779,7 @@ const seg = (v, w, h, lo, hi, i0) => {
 const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
 class Component extends DCLogic {
-  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36 };
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null };
 
   get d() { if (!this._d) this._d = this.build(); return this._d; }
   cur() { return this.props.currency ?? '£'; }
@@ -584,11 +851,11 @@ class Component extends DCLogic {
   renderVals() {
     const d = this.d, S = this.state, P = this.props;
     const showSparks = P.showSparklines ?? true;
-    const screens = [['overview', 'Overview'], ['spending', 'Spending'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
+    const screens = [['summary', 'Summary'], ['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
     const nav = screens.map(([id, label]) => ({
       label, go: this.go(id),
-      col: S.screen === id ? '#E8E7E3' : '#6E706D',
-      mark: S.screen === id ? ACCENT : 'transparent'
+      col: (S.screen === id || (id === 'summary' && S.screen === 'overview')) ? '#E8E7E3' : '#6E706D',
+      mark: (S.screen === id || (id === 'summary' && S.screen === 'overview')) ? ACCENT : 'transparent'
     }));
 
     // ── net worth chart
@@ -680,7 +947,10 @@ class Component extends DCLogic {
         bg: on ? '#0F1110' : 'transparent',
         sparkCol: on ? ACCENT : '#3A3D3B',
         spark: sp(c.hist, 130, 18),
-        go: () => this.setState({ cat: c.name })
+        txnLabel: ((d.transactionDetails || []).filter(t => t.category === c.name).length || 0) + ' TXNS',
+        txnCol: on ? ACCENT : '#5C5E5C',
+        go: () => this.setState({ cat: c.name, txnOpen: true }),
+        open: e => { e?.stopPropagation?.(); this.setState({ cat: c.name, txnOpen: true }); }
       };
     });
     const CH = 210;
@@ -751,6 +1021,29 @@ class Component extends DCLogic {
       const pct = Math.min(100, c.spent / c.budgeted * 100);
       return { name: c.name, pair: this.m(c.spent) + ' / ' + this.m(c.budgeted), pct: pct.toFixed(1), bar: pct > 90 ? '#8A8B88' : ACCENT };
     });
+    const mixPalette = [ACCENT, '#5AA9A3', '#8F9C7A', '#A79A72', '#7D8890', '#606562'];
+    const mixSource = d.cats.filter(c => c.spent > 0).sort((a, b) => b.spent - a.spent).slice(0, 6);
+    const mixValue = mixSource.reduce((a, c) => a + c.spent, 0);
+    const mixGap = 1.25;
+    let mixCursor = 0;
+    const mixSegments = mixSource.map((c, i) => {
+      const arc = Math.max(1, c.spent / mixValue * (100 - mixSource.length * mixGap));
+      const offset = -mixCursor;
+      mixCursor += arc + mixGap;
+      const selected = S.mixCat === c.name;
+      return { name: c.name, spent: this.m(c.spent), c: mixPalette[i], arc: arc.toFixed(2), rest: (100 - arc).toFixed(2), dash: arc.toFixed(2) + ',' + (100 - arc).toFixed(2), offset: offset.toFixed(2), opacity: S.mixCat && !selected ? '.2' : '1', textCol: S.mixCat && !selected ? '#5C5E5C' : '#8A8B88', open: () => this.setState({ mixOpen: true, mixCat: c.name }) };
+    });
+    const mixDetailSource = d.cats.find(c => c.name === S.mixCat) || mixSource[0] || d.cats[0];
+    const mixDetailPct = mixDetailSource && mixDetailSource.budgeted > 0 ? Math.min(100, mixDetailSource.spent / mixDetailSource.budgeted * 100) : 0;
+    const mixDetailRemaining = mixDetailSource ? mixDetailSource.budgeted - mixDetailSource.spent : 0;
+    const mixDetailTxns = mixDetailSource ? ((d.transactionDetails || []).filter(t => t.category === mixDetailSource.name).length || 0) : 0;
+    const mixDetail = mixDetailSource ? {
+      name: mixDetailSource.name, spent: this.m(mixDetailSource.spent), budgeted: this.m(mixDetailSource.budgeted),
+      remaining: this.m(mixDetailRemaining), remCol: mixDetailRemaining < 0 ? '#E8E7E3' : '#D2D1CD',
+      color: mixPalette[Math.max(0, mixSource.findIndex(c => c.name === mixDetailSource.name))] || ACCENT,
+      trend: sp(mixDetailSource.hist, 280, 42), status: mixDetailSource.budgeted > 0 ? mixDetailPct.toFixed(0) + '% USED' : 'UNBUDGETED',
+      start: d.months[18] ? d.months[18].short : '', end: d.months[35] ? d.months[35].short : '', txns: mixDetailTxns + ' TXNS'
+    } : { name: '', spent: '', budgeted: '', remaining: '', remCol: '#D2D1CD', color: ACCENT, trend: '', status: '', start: '', end: '', txns: '' };
     const txns = [
       ['Neighbourhood Market', 'AUG 8 · CARD ····4471', '−' + this.cur() + '42.18'],
       ['Corner Grocer', 'AUG 6 · CARD ····4471', '−' + this.cur() + '18.90'],
@@ -773,7 +1066,7 @@ class Component extends DCLogic {
       nav, showSparks,
       isTabs: (P.navStyle ?? 'tabs') === 'tabs', isRail: (P.navStyle ?? 'tabs') === 'rail',
       screenTitle: (screens.find(s => s[0] === S.screen) || screens[0])[1],
-      isOverview: S.screen === 'overview', isSpending: S.screen === 'spending',
+      isOverview: S.screen === 'overview' || S.screen === 'summary', isSpending: S.screen === 'spending', isTransactions: S.screen === 'transactions',
       isFlow: S.screen === 'flow', isAccounts: S.screen === 'accounts',
       ranges: [12, 24, 36].map((r, i) => ({
         label: r + 'M', go: () => this.setState({ range: r, hover: null }),
@@ -802,9 +1095,9 @@ class Component extends DCLogic {
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
       acctHead, acctGroups, compBars, compRows,
-      netWorthBig: this.m(d.nw[35]), netWorthDelta: '+' + this.m(3118) + ' · 30 DAYS',
+      netWorthBig: this.m(d.nw[35]), netWorthDelta: (d.netWorthDelta >= 0 ? '+' : '') + this.m(d.netWorthDelta) + ' · 30 DAYS',
       mobileSpark: path(last12, 118, 24, Math.min(...last12), Math.max(...last12), 1),
-      mobileKpis, mobileCats, txns,
+      mobileKpis, mobileCats, mixTotal: this.m(mixValue), mixSegments, mixOpen: Boolean(S.mixOpen), mixDetail, openMix: () => this.setState({ mixOpen: true, mixCat: mixSource[0] ? mixSource[0].name : null }), closeMix: () => this.setState({ mixOpen: false }), txns,
       mobileCatMain: path(sel.hist, 1000, 120, cLo, cHi), mobileCatAvg: path(avg, 1000, 120, cLo, cHi),
       notes
     };

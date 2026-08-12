@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/wrangler.json",
+  "name": "ynab-dashboard-sync",
+  "main": "src/index.js",
+  "compatibility_date": "2026-08-12",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  },
+  "vars": {
+    "GITHUB_REPOSITORY": "kaneallen7/YNAB-Application"
+  },
+  "triggers": {
+    "crons": ["*/5 * * * *"]
+  }
+}

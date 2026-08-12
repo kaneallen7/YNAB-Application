@@ -119,7 +119,11 @@ def normalise(budget, hist_months):
                     "payee": spayee, "category": scat, "amount": amt,
                     "is_income": is_income(scat, spayee, amt, s.get("transfer_account_id")),
                     "is_transfer": bool(s.get("transfer_account_id")),
-                    "is_adjustment": spayee in BALANCE_ADJUST_PAYEES,
+                    "is_adjustment": spayee in BALANCE_ADJUST_PAYEES or scat == "Pot correction" or "pot transfer" in spayee.lower(),
+                    "memo": s.get("memo") or t.get("memo") or "",
+                    "cleared": t.get("cleared") or "uncleared",
+                    "approved": bool(t.get("approved", False)),
+                    "flag_color": t.get("flag_color"),
                 })
         else:
             amt = t["amount"] / MILLI
@@ -129,7 +133,11 @@ def normalise(budget, hist_months):
                 "payee": parent_payee, "category": tcat, "amount": amt,
                 "is_income": is_income(tcat, parent_payee, amt, t.get("transfer_account_id")),
                 "is_transfer": bool(t.get("transfer_account_id")),
-                "is_adjustment": parent_payee in BALANCE_ADJUST_PAYEES,
+                "is_adjustment": parent_payee in BALANCE_ADJUST_PAYEES or tcat == "Pot correction" or "pot transfer" in parent_payee.lower(),
+                "memo": t.get("memo") or "",
+                "cleared": t.get("cleared") or "uncleared",
+                "approved": bool(t.get("approved", False)),
+                "flag_color": t.get("flag_color"),
             })
 
     months = sorted((m for m in budget.get("months", []) if not m.get("deleted")),
@@ -240,6 +248,7 @@ def _template_model(data):
                  if a.get("on_budget", True) and not a.get("is_liability"))
     savings_rate = float(data.get("kpi", {}).get("savings_rate", 0))
     last12 = nw[-12:]
+    reconstructed_points = sum(1 for row in rows if "(MTD)" not in str(row.get("label", "")))
     complete_flow = [f for f in flow if "(MTD)" not in str(f.get("label", ""))]
     sr_series = [f["n"] / f["i"] * 100 if f["i"] else 0 for f in complete_flow[-12:]]
     runway_series = [liquid / f["o"] if f["o"] else 0 for f in complete_flow[-12:]]
@@ -252,13 +261,34 @@ def _template_model(data):
     ]
     last_flow = flow[-1]
     previous_flow = flow[-2] if len(flow) > 1 else last_flow
+    transaction_groups = {}
+    for txn in data.get("transaction_details", []):
+        key = str(txn.get("date", ""))[:7]
+        if not key:
+            continue
+        transaction_groups.setdefault(key, []).append(txn)
+    transaction_months = []
+    for key in sorted(transaction_groups, reverse=True):
+        month_rows = transaction_groups[key]
+        try:
+            month_label = date.fromisoformat(key + "-01").strftime("%b %y").upper()
+        except ValueError:
+            month_label = key.upper()
+        transaction_months.append({
+            "key": key, "label": month_label, "count": len(month_rows),
+            "total": round(sum(float(row.get("amount", 0)) for row in month_rows
+                               if row.get("type") not in {"TRANSFER", "ADJUSTMENT"}), 2),
+            "rows": month_rows,
+        })
     return {
         "months": months, "nw": nw, "liab": liab, "assets": assets, "proj": proj,
+        "nwSubtitle": f"RECONSTRUCTED MONTH-END · {reconstructed_points} OBSERVATIONS · CURRENT BALANCES ANCHOR",
         "cats": cats, "flow": flow, "accounts": {"budget": budget_accounts, "tracking": tracking_accounts},
         "comp": comp, "liquid": liquid, "kpiDefs": kpi_defs,
         "runwayRows": [["Liquid buffer", liquid, "#D2D1CD"], ["Average monthly burn", avg_spend, "#D2D1CD"],
                        ["Runway", f"{(liquid / avg_spend if avg_spend else 0):.1f} mo", "#3FA37A"], ["Target (6 mo)", "Met" if liquid >= avg_spend * 6 else "Building", "#656866"]],
         "spendPrev": previous_flow["o"], "savingsRate": savings_rate, "age": meta.get("age") or "—",
+        "mobilePeriod": date.today().strftime("%b %Y").upper(),
         "ready": float(meta.get("ready", 0)), "netWorthDelta": current_nw - (nw[-2] if len(nw) > 1 else current_nw),
         "planName": meta.get("plan", "YNAB PLAN"), "currentPeriod": last_flow["label"] or meta.get("last_month", "CURRENT"),
         "periodDetail": "LIVE YNAB DATA", "syncLabel": "SYNCED FROM YNAB",
@@ -267,6 +297,9 @@ def _template_model(data):
                        ["READY TO ASSIGN", float(meta.get("ready", 0)), "#656866"],
                        ["RUNWAY", f"{(liquid / avg_spend if avg_spend else 0):.1f} mo", "#3FA37A"]],
         "recentTxns": data.get("recent_transactions", []),
+        "transactionDetails": data.get("transaction_details", []),
+        "transactionMonths": transaction_months,
+        "txnHistoryNote": f"{len(data.get('transaction_details', []))} TRANSACTIONS · FULL SYNCED HISTORY",
     }
 
 
@@ -295,7 +328,7 @@ def _live_template_html(data):
     html = _replace_between(html, "    const kpiDefs = [", "    const kpis =", "    const kpiDefs = d.kpiDefs;\n")
     html = html.replace("label, value, sub, scol, vcol, bl: i ? HAIR : '0', spark: sp(series, 68, 18)", "label, value: typeof value === 'number' ? this.m(value) : value, sub, scol, vcol, bl: i ? HAIR : '0', spark: sp(series, 68, 18)")
     html = _replace_between(html, "    const runwayRows = [", "\n\n    // ── spending", "    const runwayRows = d.runwayRows.map(([k, v, c]) => ({ k, v: typeof v === 'number' ? this.m(v) : v, c }));")
-    html = html.replace("const sel = d.cats.find(c => c.name === S.cat) || d.cats[1];", "const sel = d.cats.find(c => c.name === S.cat) || d.cats[0];")
+    html = html.replace("const sel = d.cats.find(c => c.name === S.cat) || d.cats[1];", "const sel = d.cats.find(c => c.name === S.cat) || d.cats[0];\n    const selTxns = (d.transactionDetails || []).filter(t => t.category === sel.name).slice(0, 12).map(t => ({ date: t.date, payee: t.payee, account: t.account, memo: t.memo || '', amount: this.m(t.amount, 2), col: t.amount < 0 ? '#D2D1CD' : ACCENT }));\n    const selIndex = Math.max(0, d.cats.findIndex(c => c.name === sel.name));\n    const txnTop = ((P.spendingLayout ?? 'chart') === 'chart' ? 350 : 42) + selIndex * 40 + 'px';\n    const transactionMonths = (d.transactionMonths || []).map(m => ({ key: m.key, label: m.label, count: m.count, total: this.m(m.total, 2), isOpen: S.txnMonth === m.key, bg: S.txnMonth === m.key ? '#0F1110' : 'transparent', chevron: S.txnMonth === m.key ? '−' : '+', toggle: () => this.setState({ txnMonth: S.txnMonth === m.key ? null : m.key }), rows: (m.rows || []).map(t => ({ date: t.date, payee: t.payee, account: t.account, category: t.category, memo: t.memo || t.type || '', amount: this.m(t.amount, 2), col: t.amount < 0 ? '#D2D1CD' : ACCENT })) }));")
     html = html.replace("const catMonths = d.months.slice(18);", "const catMonths = d.months.slice(-18);")
     html = html.replace("catMonths[17].short", "catMonths[catMonths.length - 1].short")
     html = html.replace("spendPrev: this.m(2384)", "spendPrev: this.m(d.spendPrev)")
@@ -304,6 +337,9 @@ def _live_template_html(data):
     html = html.replace("concat([{ t: 'FEB 27' }])", "concat([{ t: 'PROJECTED' }])")
     html = html.replace("d.nw[35]", "d.nw[d.nw.length - 1]")
     html = html.replace("this.m(3118)", "this.m(d.netWorthDelta)")
+    html = html.replace("      nwGrid, nwYLabels, nwXLabels, projLeft,", "      nwGrid, nwYLabels, nwXLabels, projLeft, nwSubtitle: d.nwSubtitle,")
+    html = html.replace("      selCatSub: this.m(sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),", "      selCatSub: this.m(Number.isFinite(sel.balance) ? sel.balance : sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),\n      selCatMoved: this.m(sel.moved_out || 0), selTxns, hasSelTxns: selTxns.length > 0,\n      selTxnsNote: selTxns.length ? selTxns.length + ' MATCHING TRANSACTIONS' : 'NO TRANSACTIONS IN SYNC WINDOW',\n      showTxnDrawer: !!S.txnOpen, closeTxnDrawer: () => this.setState({ txnOpen: false }),")
+    html = html.replace("showTxnDrawer: !!S.txnOpen,", "showTxnDrawer: !!S.txnOpen, openTxnDrawer: () => this.setState({ txnOpen: true }), txnTop, transactionMonths, txnHistoryNote: d.txnHistoryNote,")
     html = _replace_between(html, "    const comp = [", "    const posTotal =", "    const comp = d.comp;\n")
     html = _replace_between(html, "    const mobileKpis = [", "    const mobileCats =", "    const mobileKpis = d.mobileKpis.map(([label, value, vcol], i) => ({ label, value: typeof value === 'number' ? this.m(value, 2) : value, vcol, bl: i % 2 ? HAIR : '0' }));\n")
     html = _replace_between(html, "    const txns = [", "\n\n    const notes =", "    const txns = d.recentTxns.map(t => ({ payee: t.payee, meta: t.date.toUpperCase() + ' · ' + t.account.toUpperCase(), amt: this.m(t.amount, 2) }));")
@@ -313,6 +349,23 @@ def _live_template_html(data):
     html = html.replace(">AUG 2026<", ">{{ currentPeriod }}<")
     html = html.replace(">DAY 9 / 31<", ">{{ periodDetail }}<")
     html = html.replace("SYNCED 09:14", "{{ syncLabel }}")
+    # The hosted dashboard is rebuilt by the scheduled Cloudflare/GitHub sync.
+    # Reloading on a timer means an already-open tab picks up that deployment
+    # without exposing the YNAB token to the browser.
+    refresh_script = """
+<script>
+(() => {
+  const refreshMs = 5 * 60 * 1000;
+  window.setTimeout(() => {
+    const next = new URL(window.location.href);
+    next.searchParams.set('_refresh', Date.now().toString());
+    window.location.replace(next.toString());
+  }, refreshMs);
+})();
+</script>
+"""
+    if "_refresh" not in html and "</body>" in html:
+        html = html.replace("</body>", refresh_script + "\n</body>")
     return html
 
 

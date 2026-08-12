@@ -41,6 +41,14 @@ a:hover{color:#5DBE95}
 .insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
+.insight-sankey-mobile{display:none}
+.insight-sankey-mobile svg{display:block;width:100%;height:100%}
+.insight-mobile-node{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:7px 10px;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid #2A2C2B;border-radius:2px;background:#121615;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.insight-mobile-node:hover,.insight-mobile-node:focus{background:#1A211E;border-color:#3FA37A;outline:none;transform:translateY(-1px)}
+.insight-mobile-node span:first-child{font:400 10.5px/1.15 'IBM Plex Sans';color:#D2D1CD;white-space:normal;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.insight-mobile-node span:last-child{margin-top:5px;font:400 9px/1 'IBM Plex Mono';color:#6E706D;white-space:nowrap}
+.insight-mobile-link{fill:none;stroke:#3FA37A;stroke-linecap:round;opacity:.36;transition:opacity .26s ease,stroke-width .26s ease}
+.insight-mobile-link.save{stroke:#8F9C7A;opacity:.5}
 .insight-node{fill:#121615;stroke:#2A2C2B;stroke-width:1}
 .insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid transparent;border-radius:2px;transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .insight-node-copy:hover,.insight-node-copy:focus{background:#1A211E;border-color:#3FA37A;outline:none;transform:translateY(-1px)}
@@ -162,6 +170,8 @@ a:hover{color:#5DBE95}
   .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
   .insight-sankey{height:230px!important}
   .insight-sankey.expanded{height:286px!important}
+  .insight-sankey{display:none!important}
+  .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
   .calendar-cell{min-height:42px!important;padding:5px 4px!important}
   .calendar-amount{font-size:8px!important}
   .health-layout{gap:16px!important}
@@ -765,6 +775,17 @@ a:hover{color:#5DBE95}
 <div class="insight-node-copy" onClick="{{ sankeyHub.open }}" role="button" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
 <sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 </div>
+<div class="insight-sankey-mobile {{ sankeyExpandedClass }}" style="height:{{ sankeyMobileHeight }}px">
+<svg viewBox="0 0 400 {{ sankeyMobileHeight }}" preserveAspectRatio="none" role="img" aria-label="Vertical money flow Sankey diagram">
+<sc-for list="{{ sankeyMobileLinks }}" as="l" hint-placeholder-count="12"><path class="insight-mobile-link {{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
+<sc-for list="{{ sankeyMobileSources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+<rect class="insight-node" x="{{ sankeyMobileHub.x }}" y="{{ sankeyMobileHub.y }}" width="{{ sankeyMobileHub.w }}" height="{{ sankeyMobileHub.h }}" rx="2"></rect>
+<sc-for list="{{ sankeyMobileUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+</svg>
+<sc-for list="{{ sankeyMobileSources }}" as="n" hint-placeholder-count="4"><div class="insight-mobile-node" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<div class="insight-mobile-node" onClick="{{ sankeyMobileHub.open }}" role="button" style="left:{{ sankeyMobileHub.left }}%;top:{{ sankeyMobileHub.top }}%;width:{{ sankeyMobileHub.width }}%;height:{{ sankeyMobileHub.height }}%"><span>{{ sankeyMobileHub.name }}</span><span>{{ sankeyMobileHub.value }}</span></div>
+<sc-for list="{{ sankeyMobileUses }}" as="n" hint-placeholder-count="8"><div class="insight-mobile-node" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+</div>
 <div class="sankey-hint">{{ sankeyHint }}</div>
 <sc-if value="{{ sankeyHasMore }}" hint-placeholder-val="{{ false }}"><div class="sankey-expand-action" onClick="{{ expandSankey }}">{{ sankeyExpandLabel }}</div></sc-if>
 <sc-if value="{{ sankeyOpen }}" hint-placeholder-val="{{ false }}"><div class="sankey-detail"><div class="sankey-detail-head"><span class="sankey-detail-name">{{ sankeyFocusName }}</span><span class="sankey-detail-close" onClick="{{ closeSankey }}">CLOSE ×</span></div><div class="sankey-detail-meta">{{ sankeyFocusMeta }}</div><div class="sankey-detail-value">{{ sankeyFocusValue }}</div><div class="sankey-detail-note">{{ sankeyFocusNote }}</div></div></sc-if>
@@ -1174,6 +1195,22 @@ class Component extends DCLogic {
     const sankeyLinks = [];
     sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
     sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));
+    const sankeyMobileHeight = 210 + Math.max(1, Math.ceil(sankeyDisplayRaw.length / 2)) * 68;
+    const mobileBoxW = sankeySourcesRaw.length <= 2 ? 170 : 120;
+    const mobileSourceCount = Math.max(1, sankeySourcesRaw.length);
+    const mobileSourceGap = (400 - mobileBoxW * mobileSourceCount) / (mobileSourceCount + 1);
+    const mobileNode = (item, x, y, w, h) => ({
+      x, y, w, h, left: x / 400 * 100, top: y / sankeyMobileHeight * 100,
+      width: w / 400 * 100, height: h / sankeyMobileHeight * 100,
+      name: item.name, value: this.m(Number(item.value || 0)), kind: item.kind || 'spend', open: openSankey(item)
+    });
+    const sankeyMobileSources = sankeySourcesRaw.map((item, i) => mobileNode(item, mobileSourceGap + i * (mobileBoxW + mobileSourceGap), 18, mobileBoxW, 52));
+    const sankeyMobileHub = mobileNode(sankeyData.hub || { name: 'Money in', value: sankeyTotal }, 100, 102, 200, 58);
+    const mobileUseW = 180, mobileUseXs = [10, 210];
+    const sankeyMobileUses = sankeyDisplayRaw.map((item, i) => mobileNode(item, mobileUseXs[i % 2], 190 + Math.floor(i / 2) * 68, mobileUseW, 52));
+    const sankeyMobileLinks = [];
+    sankeyMobileSources.forEach(n => sankeyMobileLinks.push({ d: `M ${n.x + n.w / 2} ${n.y + n.h} C ${n.x + n.w / 2} 86, 200 96, 200 102`, w: Math.max(2, n.h * .45), cls: '' }));
+    sankeyMobileUses.forEach(n => sankeyMobileLinks.push({ d: `M 200 160 C 200 ${n.y - 18}, ${n.x + n.w / 2} ${n.y - 10}, ${n.x + n.w / 2} ${n.y}`, w: Math.max(2, n.h * .45), cls: n.kind === 'save' ? 'save' : '' }));
     const sankeyFocusRaw = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal }, ...sankeyUsesRaw].find(item => item.name === S.sankeyFocus) || null;
     const sankeyFocusValue = sankeyFocusRaw ? Number(sankeyFocusRaw.value || 0) : 0;
     const sankeyFocusName = sankeyFocusRaw?.name || 'Select a flow';
@@ -1328,7 +1365,7 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
-      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
       sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
       sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',

@@ -349,6 +349,23 @@ def _live_template_html(data):
     html = html.replace(">AUG 2026<", ">{{ currentPeriod }}<")
     html = html.replace(">DAY 9 / 31<", ">{{ periodDetail }}<")
     html = html.replace("SYNCED 09:14", "{{ syncLabel }}")
+    # The hosted dashboard is rebuilt by the scheduled Cloudflare/GitHub sync.
+    # Reloading on a timer means an already-open tab picks up that deployment
+    # without exposing the YNAB token to the browser.
+    refresh_script = """
+<script>
+(() => {
+  const refreshMs = 5 * 60 * 1000;
+  window.setTimeout(() => {
+    const next = new URL(window.location.href);
+    next.searchParams.set('_refresh', Date.now().toString());
+    window.location.replace(next.toString());
+  }, refreshMs);
+})();
+</script>
+"""
+    if "_refresh" not in html and "</body>" in html:
+        html = html.replace("</body>", refresh_script + "\n</body>")
     return html
 
 

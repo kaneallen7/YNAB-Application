@@ -143,6 +143,15 @@ The repository contains the source code and project-local design assets.
 Generated dashboards and YNAB data are excluded by `.gitignore`. Keep
 `YNAB_TOKEN` in your local environment and never commit it.
 
+## Hosted refresh every five minutes
+
+The hosted dashboard can be kept current without putting your YNAB token in
+the browser. The workflow in `.github/workflows/ynab-sync.yml` pulls the data
+with GitHub Actions and publishes the generated page to Cloudflare Pages. A
+small Cloudflare Worker in `cloudflare/ynab-dashboard-sync` sends the workflow
+a `repository_dispatch` event every five minutes. See that directory's
+README for the one-time secrets and deployment steps.
+
 ## Where this goes next
 
 This is the **personal-token** path. If Ledgerlens ever becomes a hosted app

@@ -39,6 +39,8 @@ a:hover{color:#5DBE95}
 .insight-card-title{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
 .insight-card-title>span:first-child{font:400 13px/1 'IBM Plex Sans';color:#E8E7E3}
 .insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
+.sankey-scroll-frame{width:100%;scrollbar-color:#2A2C2B transparent;scrollbar-width:thin}
+.sankey-mobile-scroll-hint{display:none}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
 .insight-sankey-mobile{display:none}
@@ -168,10 +170,11 @@ a:hover{color:#5DBE95}
   .insights-intro>span:last-child{display:block!important;margin-top:9px!important;line-height:1.5!important}
   .insights-grid{display:block!important}
   .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
-  .insight-sankey{height:230px!important}
-  .insight-sankey.expanded{height:286px!important}
-  .insight-sankey{display:none!important}
-  .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
+  .sankey-scroll-frame{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+  .sankey-mobile-scroll-hint{display:block;margin-top:7px;font:400 8.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C}
+  .sankey-scroll-frame .insight-sankey{width:680px;min-width:680px;height:230px!important;display:block!important}
+  .sankey-scroll-frame .insight-sankey.expanded{height:286px!important}
+  .insight-sankey-mobile{display:none!important}
   .calendar-cell{min-height:42px!important;padding:5px 4px!important}
   .calendar-amount{font-size:8px!important}
   .health-layout{gap:16px!important}
@@ -764,6 +767,7 @@ a:hover{color:#5DBE95}
 
 <div class="insight-card insight-card-wide">
 <div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
+<div class="sankey-scroll-frame">
 <div class="insight-sankey {{ sankeyExpandedClass }}">
 <svg viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
 <sc-for list="{{ sankeyLinks }}" as="l" hint-placeholder-count="8"><path class="{{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
@@ -775,6 +779,8 @@ a:hover{color:#5DBE95}
 <div class="insight-node-copy" onClick="{{ sankeyHub.open }}" role="button" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
 <sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 </div>
+</div>
+<div class="sankey-mobile-scroll-hint">SWIPE TO VIEW THE FULL FLOW</div>
 <div class="insight-sankey-mobile {{ sankeyExpandedClass }}" style="height:{{ sankeyMobileHeight }}px">
 <svg viewBox="0 0 400 {{ sankeyMobileHeight }}" preserveAspectRatio="none" role="img" aria-label="Vertical money flow Sankey diagram">
 <sc-for list="{{ sankeyMobileLinks }}" as="l" hint-placeholder-count="12"><path class="insight-mobile-link {{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>

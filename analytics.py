@@ -277,6 +277,42 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
                   "start": heat_start.isoformat(), "end": _mkey(hist_months[-1]),
                   "end_date": today.isoformat()}
 
+    # ---- current-month calendar data and transparent financial health score ----
+    current_month_start = _month_start(today)
+    current_month_end = min(_month_end(current_month_start), today)
+    calendar_days = []
+    cur_day = current_month_start
+    while cur_day <= current_month_end:
+        key = cur_day.isoformat()
+        calendar_days.append({"d": key, "day": cur_day.day,
+                              "weekday": cur_day.weekday(),
+                              "v": round(daily.get(key, 0), 2)})
+        cur_day += timedelta(days=1)
+
+    def _score(value, target):
+        return round(max(0.0, min(100.0, value / target * 100.0)), 1) if target else 0.0
+
+    age_days = float((dashboard_meta or {}).get("age") or 0)
+    runway_months = liquid_now / avg_spend if avg_spend else 0.0
+    budget_scores = []
+    for row in bva:
+        assigned_value = float(row.get("assigned", 0))
+        actual_value = float(row.get("actual", 0))
+        if assigned_value > 0:
+            budget_scores.append(max(0.0, min(100.0, assigned_value / max(actual_value, assigned_value) * 100.0)))
+    budget_score = sum(budget_scores) / len(budget_scores) if budget_scores else 0.0
+    health_components = [
+        {"name": "Savings rate", "value": _score(max(0.0, savings_rate), 30.0), "detail": f"{savings_rate:.1f}% · target 30%"},
+        {"name": "Cash runway", "value": _score(runway_months, 6.0), "detail": f"{runway_months:.1f} mo · target 6 mo"},
+        {"name": "Age of money", "value": _score(age_days, 60.0), "detail": f"{int(age_days)}d · target 60d"},
+        {"name": "Budget control", "value": round(budget_score, 1), "detail": "Budgeted categories within plan"},
+    ]
+    health_score = round(sum(c["value"] * w for c, w in zip(health_components, (0.30, 0.25, 0.20, 0.25))))
+    health_band = "Strong" if health_score >= 80 else ("Building" if health_score >= 60 else "Needs attention")
+    health = {"score": health_score, "band": health_band,
+              "components": health_components,
+              "note": "Indicative score based on recent synced data; it is not financial advice."}
+
     span = f"{_mlabel(hist_months[0])} – {through}" if has_current else \
            f"{_mlabel(hist_months[0])} – {_mlabel(hist_months[-1])}"
     monthly_flow = []
@@ -334,6 +370,12 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
         "forecast": fc, "forecast_start": {"label": _mlabel(hist_months[-1]), "bal": round(liquid_now, 2)},
         "daily": [{"d": k, "v": round(v, 2)} for k, v in sorted(daily.items())],
         "heat_scale": heat_scale, "sankey": sankey, "projection": projection,
+        "insights": {"sankey": sankey, "daily": [{"d": k, "v": round(v, 2)} for k, v in sorted(daily.items())],
+                     "heat_scale": heat_scale,
+                     "calendar": {"label": _mlabel(current_month_start).upper(),
+                                   "year": current_month_start.year, "month": current_month_start.month,
+                                   "days": calendar_days},
+                     "health": health},
         "recent_transactions": [
             {"date": t["date"], "payee": t.get("payee") or "(no payee)",
              "account": t.get("account") or "Account", "amount": round(t["amount"], 2)}

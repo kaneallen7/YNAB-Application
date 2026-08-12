@@ -30,6 +30,58 @@ a:hover{color:#5DBE95}
 .mobile-overview-mix-legend{flex:1;display:grid;grid-template-columns:1fr;gap:8px;min-width:0}
 .mobile-overview-mix-card{margin-top:16px;padding:13px 14px}
 .mobile-overview-mix-card-grid{gap:10px;margin-top:12px}
+.insights-page{padding:22px 26px 34px}
+.insights-intro{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid #1E201F}
+.insights-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-bottom:1px solid #1E201F}
+.insight-card{min-width:0;padding:22px 22px 24px;border-bottom:1px solid #1E201F}
+.insight-card:nth-child(odd){border-right:1px solid #1E201F}
+.insight-card-wide{grid-column:1 / -1;border-right:0!important}
+.insight-card-title{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
+.insight-card-title>span:first-child{font:400 13px/1 'IBM Plex Sans';color:#E8E7E3}
+.insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
+.insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative}
+.insight-sankey svg{display:block;width:100%;height:100%}
+.insight-node{fill:#121615;stroke:#2A2C2B;stroke-width:1}
+.insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:hidden;pointer-events:none}
+.insight-node-copy span:first-child{font:400 11px/1.1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.insight-node-copy span:last-child{margin-top:5px;font:400 9px/1 'IBM Plex Mono';color:#6E706D;white-space:nowrap}
+.insight-node-label{font:400 11px 'IBM Plex Sans';fill:#D2D1CD}
+.insight-node-value{font:400 9px 'IBM Plex Mono';fill:#6E706D}
+.insight-link{fill:none;stroke:#3FA37A;stroke-linecap:round;opacity:.34}
+.insight-link.save{stroke:#8F9C7A;opacity:.48}
+.heatmap-shell{margin-top:18px;overflow:hidden}
+.heatmap-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-bottom:5px}
+.heatmap-weekdays span{font:400 8px/1 'IBM Plex Mono';color:#4E514F;text-align:center}
+.heatmap-weekdays span:first-child{text-align:left}
+.heatmap-grid{display:grid;grid-template-columns:repeat(53,minmax(0,1fr));grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:4px}
+.heatmap-months{display:flex;justify-content:space-between;margin:8px 0 0;font:400 8px/1 'IBM Plex Mono';color:#4E514F}
+.heat-cell{width:100%;height:12px;border:1px solid rgba(255,255,255,.025);border-radius:2px}
+.heat-label{font:400 8px/12px 'IBM Plex Mono';color:#4E514F}
+.heat-legend{display:flex;align-items:center;gap:5px;margin-top:12px;font:400 8px/1 'IBM Plex Mono';color:#4E514F}
+.heat-legend i{display:block;width:11px;height:11px;border-radius:2px;background:#151817;border:1px solid rgba(255,255,255,.025)}
+.heat-legend i:nth-of-type(2){background:#245843}.heat-legend i:nth-of-type(3){background:#2E7D5A}.heat-legend i:nth-of-type(4){background:#3FA37A}
+.calendar-shell{margin-top:18px;border-top:1px solid #1E201F}
+.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.calendar-weekdays{padding:10px 0 6px}
+.calendar-weekdays span{font:400 8px/1 'IBM Plex Mono';letter-spacing:.06em;color:#4E514F;text-align:right}
+.calendar-cell{min-height:48px;padding:6px 6px 5px;border:1px solid #1A1C1B;background:#101312;display:flex;flex-direction:column;justify-content:space-between}
+.calendar-cell.empty{background:transparent;border-color:transparent}
+.calendar-cell.today{border-color:#3FA37A}
+.calendar-day{font:400 9px/1 'IBM Plex Mono';color:#8A8B88}
+.calendar-amount{font:400 10px/1 'IBM Plex Mono';color:#D2D1CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.health-layout{display:flex;align-items:center;gap:26px;margin-top:18px}
+.health-ring{width:132px;height:132px;flex:none;position:relative}
+.health-ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.health-ring circle{fill:none;stroke-width:10}
+.health-score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:300 30px/1 'IBM Plex Sans';color:#E8E7E3}
+.health-components{flex:1;min-width:0}
+.health-component{padding:9px 0;border-bottom:1px solid #171918}
+.health-component-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.health-component-name{font:400 11px/1 'IBM Plex Sans';color:#D2D1CD}
+.health-component-value{font:400 10px/1 'IBM Plex Mono';color:#8A8B88}
+.health-bar{height:3px;margin-top:7px;background:#1A1C1B}
+.health-bar>div{height:100%;background:#3FA37A}
+.health-note{margin-top:14px;font:300 10px/1.5 'IBM Plex Sans';color:#5C5E5C}
 /* Keep the single-surface desktop composition intact while allowing every
    production screen to reflow cleanly on a phone-sized viewport. */
 @media (max-width:720px){
@@ -88,6 +140,16 @@ a:hover{color:#5DBE95}
   .flow-chart svg{height:210px!important}
   .flow-table-wrap{padding:18px 14px 24px!important;overflow-x:auto!important}
   .flow-table{min-width:620px!important}
+  .insights-page{padding:18px 14px 24px!important}
+  .insights-intro{display:block!important;padding-bottom:14px!important}
+  .insights-intro>span:last-child{display:block!important;margin-top:9px!important;line-height:1.5!important}
+  .insights-grid{display:block!important}
+  .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
+  .insight-sankey{height:260px!important}
+  .calendar-cell{min-height:42px!important;padding:5px 4px!important}
+  .calendar-amount{font-size:8px!important}
+  .health-layout{gap:16px!important}
+  .health-ring{width:112px!important;height:112px!important}
   .accounts-layout{display:block!important}
   .accounts-pane{padding:18px 14px 20px!important;border-right:0!important;border-bottom:1px solid #1E201F;overflow-x:auto!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
   .accounts-table,.accounts-grid{min-width:540px!important}
@@ -662,6 +724,61 @@ a:hover{color:#5DBE95}
 </div>
 </sc-if>
 
+<!-- INSIGHTS -->
+<sc-if value="{{ isInsights }}" hint-placeholder-val="{{ false }}">
+<div class="insights-page">
+<div class="insights-intro">
+<span style="font:400 13px/1 'IBM Plex Sans';color:#E8E7E3">Financial insights</span>
+<span style="font:400 9.5px/1.5 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C">PATTERNS FROM YOUR SYNCED YNAB HISTORY · READ ONLY</span>
+</div>
+<div class="insights-grid">
+
+<div class="insight-card insight-card-wide">
+<div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
+<div class="insight-sankey">
+<svg viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
+<sc-for list="{{ sankeyLinks }}" as="l" hint-placeholder-count="8"><path class="{{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
+<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+<rect class="insight-node" x="{{ sankeyHub.x }}" y="{{ sankeyHub.y }}" width="{{ sankeyHub.w }}" height="{{ sankeyHub.h }}" rx="2"></rect>
+<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+</svg>
+<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><div class="insight-node-copy" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<div class="insight-node-copy" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
+<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+</div>
+</div>
+
+<div class="insight-card">
+<div class="insight-card-title"><span>Spending heatmap</span><span>DAILY SPEND · {{ heatScaleLabel }}</span></div>
+<div class="heatmap-shell">
+<div class="heatmap-weekdays"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+<div class="heatmap-grid"><sc-for list="{{ heatCells }}" as="h" hint-placeholder-count="364"><div class="heat-cell" style="background:{{ h.bg }}" title="{{ h.title }}"></div></sc-for></div>
+<div class="heatmap-months"><span>12 MONTHS AGO</span><span>NOW</span></div>
+<div class="heat-legend"><span>LESS</span><i></i><i></i><i></i><i></i><span>MORE</span></div>
+</div>
+</div>
+
+<div class="insight-card">
+<div class="insight-card-title"><span>Calendar spending</span><span>{{ calendarLabel }} · {{ calendarTotal }}</span></div>
+<div class="calendar-shell">
+<div class="calendar-weekdays"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+<div class="calendar-grid"><sc-for list="{{ calendarCells }}" as="c" hint-placeholder-count="42"><div class="{{ c.cls }}" style="background:{{ c.bg }}" title="{{ c.title }}"><span class="calendar-day">{{ c.day }}</span><span class="calendar-amount">{{ c.amount }}</span></div></sc-for></div>
+</div>
+</div>
+
+<div class="insight-card">
+<div class="insight-card-title"><span>Financial health score</span><span>{{ healthLabel }} · INDICATIVE</span></div>
+<div class="health-layout">
+<div class="health-ring"><svg viewBox="0 0 100 100" role="img" aria-label="Financial health score"><circle cx="50" cy="50" r="40" stroke="#1A1C1B"></circle><circle cx="50" cy="50" r="40" pathLength="100" stroke="#3FA37A" stroke-dasharray="{{ healthScore }} 100"></circle></svg><div class="health-score">{{ healthScore }}</div></div>
+<div class="health-components"><sc-for list="{{ healthComponents }}" as="c" hint-placeholder-count="4"><div class="health-component"><div class="health-component-head"><span class="health-component-name">{{ c.name }}</span><span class="health-component-value">{{ c.detail }}</span></div><div class="health-bar"><div style="width:{{ c.value }}%"></div></div></div></sc-for></div>
+</div>
+<div class="health-note">{{ healthNote }}</div>
+</div>
+
+</div>
+</div>
+</sc-if>
+
 </div>
 </div>
 
@@ -843,7 +960,25 @@ class Component extends DCLogic {
         { name: 'Student Loan', type: 'LIABILITY · PLAN 2', bal: -9100.00, s: mkSpark(-9800, 12, 380) }
       ]
     };
-    return { months, nw, liab, assets, proj, cats, flow, accounts };
+    const mockDaily = [];
+    const mockEnd = new Date(2026, 7, 12);
+    for (let i = 0; i < 365; i++) {
+      const day = new Date(mockEnd); day.setDate(mockEnd.getDate() - (364 - i));
+      const value = rnd(i + 700) > .38 ? Math.round(18 + rnd(i + 900) * 170) : 0;
+      if (value > 0) mockDaily.push({ d: day.toISOString().slice(0, 10), v: value });
+    }
+    const mockCalendarDays = [];
+    for (let day = 1; day <= 12; day++) {
+      const key = '2026-08-' + String(day).padStart(2, '0');
+      mockCalendarDays.push({ d: key, day, weekday: (5 + day - 1) % 7, v: Math.round(20 + rnd(day + 1200) * 180) });
+    }
+    const insights = {
+      sankey: { sources: [{ name: 'Salary', value: 52500 }, { name: 'Other income', value: 3400 }], hub: { name: 'Money in', value: 55900 }, uses: [{ name: 'Housing', value: 17400, kind: 'spend' }, { name: 'Living costs', value: 12800, kind: 'spend' }, { name: 'Investments', value: 9200, kind: 'save' }, { name: 'Savings', value: 6500, kind: 'save' }] },
+      daily: mockDaily, heat_scale: { p50: 85, p90: 175, max: 240, avg: 94, start: '2025-08-13', end_date: '2026-08-12' },
+      calendar: { label: 'AUG 26', year: 2026, month: 8, days: mockCalendarDays },
+      health: { score: 78, band: 'Building', components: [{ name: 'Savings rate', value: 82, detail: '24.8% · target 30%' }, { name: 'Cash runway', value: 93, detail: '5.6 mo · target 6 mo' }, { name: 'Age of money', value: 78, detail: '47d · target 60d' }, { name: 'Budget control', value: 61, detail: 'Budgeted categories within plan' }], note: 'Indicative score based on recent synced data; it is not financial advice.' }
+    };
+    return { months, nw, liab, assets, proj, cats, flow, accounts, insights };
   }
 
   go(s) { return () => this.setState({ screen: s }); }
@@ -851,7 +986,7 @@ class Component extends DCLogic {
   renderVals() {
     const d = this.d, S = this.state, P = this.props;
     const showSparks = P.showSparklines ?? true;
-    const screens = [['summary', 'Summary'], ['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['accounts', 'Accounts']];
+    const screens = [['summary', 'Summary'], ['overview', 'Overview'], ['spending', 'Spending'], ['transactions', 'Transactions'], ['flow', 'Cash flow'], ['insights', 'Insights'], ['accounts', 'Accounts']];
     const nav = screens.map(([id, label]) => ({
       label, go: this.go(id),
       col: (S.screen === id || (id === 'summary' && S.screen === 'overview')) ? '#E8E7E3' : '#6E706D',
@@ -989,6 +1124,57 @@ class Component extends DCLogic {
     ].map(([label, value, sub, vcol], i) => ({ label, value, sub, vcol, bl: i ? HAIR : '0' }));
 
     // ── accounts
+    const insightData = d.insights || {};
+    const sankeyData = insightData.sankey || { sources: [], hub: { name: 'Money in', value: 0 }, uses: [] };
+    const sankeySourcesRaw = sankeyData.sources || [], sankeyUsesRaw = sankeyData.uses || [];
+    const sankeyTotal = Number(sankeyData.hub?.value || 0);
+    const sankeyLayout = (items, x, total) => {
+      const dense = items.length > 6, gap = dense ? 1 : 12, usable = dense ? 215 : 190;
+      const minH = dense ? 19 : 24, maxH = dense ? 32 : 92;
+      const scale = total > 0 ? Math.min(0.9, usable / total) : 0;
+      let y = dense ? 12 : 18;
+      return items.map(item => {
+        const value = Number(item.value || 0), h = Math.max(minH, Math.min(maxH, value * scale));
+        const node = { x, y, w: 170, h, cy: y + h / 2, left: x / 10, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend' };
+        y += h + gap;
+        return node;
+      });
+    };
+    const sankeySources = sankeyLayout(sankeySourcesRaw, 20, sankeyTotal);
+    const sankeyUses = sankeyLayout(sankeyUsesRaw, 810, sankeyTotal);
+    const sankeyHub = { x: 405, y: 104, w: 190, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal) };
+    const sankeyLinks = [];
+    sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
+    sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));
+
+    const dailyMap = {};
+    (insightData.daily || []).forEach(row => { dailyMap[row.d] = Number(row.v || 0); });
+    const heatEnd = new Date(((insightData.heat_scale || {}).end_date || new Date().toISOString().slice(0, 10)) + 'T00:00:00');
+    const heatStart = new Date(heatEnd); heatStart.setDate(heatEnd.getDate() - 364); heatStart.setDate(heatStart.getDate() - heatStart.getDay());
+    const heatScale = insightData.heat_scale || {};
+    const heatColor = v => v <= 0 ? '#151817' : v <= (heatScale.p50 || 1) ? '#245843' : v <= (heatScale.p90 || 1) ? '#2E7D5A' : '#3FA37A';
+    const heatCells = [];
+    const heatWeeks = Math.ceil((heatEnd - heatStart) / 86400000 / 7);
+    for (let week = 0; week < heatWeeks; week++) {
+      for (let weekday = 0; weekday < 7; weekday++) {
+        const day = new Date(heatStart); day.setDate(heatStart.getDate() + week * 7 + weekday);
+        const key = day.toISOString().slice(0, 10), value = dailyMap[key] || 0;
+        heatCells.push({ bg: day > heatEnd ? '#0D0F0E' : heatColor(value), title: key + ' · ' + this.m(value), empty: day > heatEnd });
+      }
+    }
+    const calendarData = insightData.calendar || {}, calendarRaw = calendarData.days || [];
+    const firstCalendarWeekday = calendarRaw.length ? Number(calendarRaw[0].weekday || 0) : 0;
+    const calendarCells = Array.from({ length: firstCalendarWeekday }, () => ({ empty: true, cls: 'calendar-cell empty', bg: 'transparent', day: '', amount: '' }));
+    calendarRaw.forEach(row => {
+      const value = Number(row.v || 0);
+      const today = row.d === (heatScale.end_date || '');
+      calendarCells.push({ day: row.day, amount: value ? this.m(value) : '—', title: row.d + ' · ' + this.m(value), bg: value ? heatColor(value) : '#101312', today, cls: 'calendar-cell' + (today ? ' today' : '') });
+    });
+    const calendarTotal = calendarRaw.reduce((sum, row) => sum + Number(row.v || 0), 0);
+    const health = insightData.health || { score: 0, band: 'Building', components: [], note: '' };
+    const healthScore = Number(health.score || 0), healthLabel = String(health.band || 'Building').toUpperCase();
+    const healthComponents = (health.components || []).map(c => ({ name: c.name, value: Number(c.value || 0), detail: c.detail || '' }));
+
     const acctHead = [{ t: 'ACCOUNT', a: 'left' }, { t: '12-MONTH', a: 'left' }, { t: 'BALANCE', a: 'right' }, { t: 'RECONCILED', a: 'right' }];
     const mkRows = list => list.map((a, i) => ({
       name: a.name, type: a.type, balance: this.m(a.bal, 2),
@@ -1055,7 +1241,7 @@ class Component extends DCLogic {
 
     const notes = [
       ['Read-only, one budget', 'Assumes a single YNAB budget synced hourly through the API. Nothing is edited here — the app is a lens over data YNAB already owns, so no assignment or transaction entry.'],
-      ['Four surfaces, one grid', 'Overview, Spending, Cash flow, Accounts share a 26px gutter and the same hairline system. Regions are separated by 1px rules rather than cards, so screens read as one continuous surface.'],
+      ['Five surfaces, one grid', 'Overview, Spending, Cash flow, Insights, and Accounts share a 26px gutter and the same hairline system. Regions are separated by 1px rules rather than cards, so screens read as one continuous surface.'],
       ['Accent carries meaning only', 'Green marks the current series, the selected row, and net-positive values. Everything else is one of six greys. Overspending is signalled by weight and a brighter grey, not by a second colour.'],
       ['Projection is explicit', 'The dashed net-worth extension is a naive 12-month trend, drawn past a labelled boundary. It is never mixed with recorded history in the same stroke.'],
       ['Numbers are illustrative', 'Balances, categories and payees are plausible placeholders. Swap in a real export and the layout holds — every figure is derived, none hard-positioned.'],
@@ -1067,7 +1253,7 @@ class Component extends DCLogic {
       isTabs: (P.navStyle ?? 'tabs') === 'tabs', isRail: (P.navStyle ?? 'tabs') === 'rail',
       screenTitle: (screens.find(s => s[0] === S.screen) || screens[0])[1],
       isOverview: S.screen === 'overview' || S.screen === 'summary', isSpending: S.screen === 'spending', isTransactions: S.screen === 'transactions',
-      isFlow: S.screen === 'flow', isAccounts: S.screen === 'accounts',
+      isFlow: S.screen === 'flow', isInsights: S.screen === 'insights', isAccounts: S.screen === 'accounts',
       ranges: [12, 24, 36].map((r, i) => ({
         label: r + 'M', go: () => this.setState({ range: r, hover: null }),
         col: S.range === r ? '#E8E7E3' : '#5C5E5C', bg: S.range === r ? '#161817' : 'transparent',
@@ -1094,6 +1280,10 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      heatCells, heatScaleLabel: heatScale.start && heatScale.end_date ? heatScale.start + ' → ' + heatScale.end_date : 'LAST 12 MONTHS',
+      calendarCells, calendarLabel: calendarData.label || 'CURRENT MONTH', calendarTotal: this.m(calendarTotal),
+      healthScore, healthBand: health.band || 'Building', healthLabel, healthComponents, healthNote: health.note || '',
       acctHead, acctGroups, compBars, compRows,
       netWorthBig: this.m(d.nw[35]), netWorthDelta: (d.netWorthDelta >= 0 ? '+' : '') + this.m(d.netWorthDelta) + ' · 30 DAYS',
       mobileSpark: path(last12, 118, 24, Math.min(...last12), Math.max(...last12), 1),

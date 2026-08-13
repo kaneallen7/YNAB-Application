@@ -31,6 +31,12 @@ a:hover{color:#5DBE95}
 .mobile-overview-mix-card{margin-top:16px;padding:13px 14px}
 .mobile-overview-mix-card-grid{gap:10px;margin-top:12px}
 .insights-page{padding:22px 26px 34px}
+.spending-chart-title>span:first-child{display:none}
+.spending-range-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px}
+.spending-range-title>span{font:400 13px/1 'IBM Plex Sans';color:#E8E7E3}
+.spending-range-controls{display:flex;align-items:center;border:1px solid #292C2A;background:#0F1110}
+.spending-range-controls>div{padding:6px 8px;cursor:pointer;font:400 8.5px/1 'IBM Plex Mono',monospace;letter-spacing:.04em;transition:background .18s ease,color .18s ease}
+.spending-range-controls>div:hover{background:#1A211E;color:#E8E7E3!important}
 .insights-intro{display:flex;align-items:baseline;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid #1E201F}
 .insights-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-bottom:1px solid #1E201F}
 .insight-card{min-width:0;padding:22px 22px 24px;border-bottom:1px solid #1E201F}
@@ -151,6 +157,9 @@ a:hover{color:#5DBE95}
   .spending-chart-wrap{padding:18px 14px 20px!important}
   .spending-chart{height:180px!important}
   .spending-chart-title{gap:8px!important;flex-wrap:wrap!important}
+  .spending-chart-title>span:last-child{font-size:8px!important;line-height:1.4!important}
+  .spending-range-title{align-items:flex-start!important;flex-direction:column!important;gap:10px!important;margin-top:10px!important}
+  .spending-range-controls{width:max-content;max-width:100%;overflow-x:auto!important}
   .spending-table-wrap{padding:18px 14px 24px!important;overflow-x:auto!important;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
   .spending-grid{min-width:650px!important}
   .spending-table-wrap>div[style*="grid-template-columns"]{min-width:650px!important}
@@ -556,6 +565,7 @@ a:hover{color:#5DBE95}
 <span style="font:400 13px/1 'IBM Plex Sans'">{{ selCat }} · 18 months</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SELECTED SERIES IN ACCENT · OTHERS NEUTRAL</span>
 </div>
+<div class="spending-range-title"><span>{{ selCat }} Â· {{ spendRange }} months</span><div class="spending-range-controls" aria-label="Spending chart range"><sc-for list="{{ spendRanges }}" as="r" hint-placeholder-count="4"><div role="button" onClick="{{ r.go }}" style="color:{{ r.col }};background:{{ r.bg }};border-left:1px solid {{ r.bl }}">{{ r.label }}</div></sc-for></div></div>
 <div style="display:flex;margin-top:16px">
 <div class="spending-y-axis" style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:210px">
 <sc-for list="{{ catYLabels }}" as="l" hint-placeholder-count="4">
@@ -957,7 +967,7 @@ const seg = (v, w, h, lo, hi, i0) => {
 const ACCENT = '#3FA37A', HAIR = '1px solid #1E201F';
 
 class Component extends DCLogic {
-  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null, sankeyOpen: false, sankeyFocus: null, calendarOpen: false, calendarDay: null };
+  state = { screen: 'overview', cat: 'Groceries', hover: null, range: 36, spendRange: 12, txnOpen: false, txnMonth: null, mixOpen: false, mixCat: null, sankeyOpen: false, sankeyFocus: null, calendarOpen: false, calendarDay: null };
 
   get d() { if (!this._d) this._d = this.build(); return this._d; }
   cur() { return this.props.currency ?? '£'; }
@@ -1132,7 +1142,7 @@ class Component extends DCLogic {
     // ── spending
     const sel = d.cats.find(c => c.name === S.cat) || d.cats[1];
     const spendTotal = d.cats.reduce((a, c) => a + c.spent, 0);
-    const catHead = [{ t: 'CATEGORY', a: 'left' }, { t: 'BUDGETED', a: 'right' }, { t: 'SPENT', a: 'right' }, { t: 'REMAINING', a: 'right' }, { t: 'USED', a: 'left' }, { t: '18-MONTH TREND', a: 'left' }];
+    const catHead = [{ t: 'CATEGORY', a: 'left' }, { t: 'BUDGETED', a: 'right' }, { t: 'SPENT', a: 'right' }, { t: 'REMAINING', a: 'right' }, { t: 'USED', a: 'left' }, { t: '24-MONTH TREND', a: 'left' }];
     const cats = d.cats.map(c => {
       const on = c.name === sel.name, pct = Math.min(100, c.spent / c.budgeted * 100), rem = c.budgeted - c.spent;
       return {
@@ -1149,15 +1159,20 @@ class Component extends DCLogic {
         open: e => { e?.stopPropagation?.(); this.setState({ cat: c.name, txnOpen: true }); }
       };
     });
+    const spendRange = [3, 6, 12, 24].includes(Number(S.spendRange)) ? Number(S.spendRange) : 12;
+    const spendWindow = Math.min(spendRange, sel.hist.length);
+    const spendSlice = values => values.slice(-spendWindow);
     const CH = 210;
     const others = d.cats.filter(c => c.name !== sel.name && c.name !== 'Rent');
-    const cLo = 0, cHi = Math.max(...sel.hist, ...others.map(c => Math.max(...c.hist))) * 1.08;
-    const catGhosts = others.map(c => ({ d: path(c.hist, W, CH, cLo, cHi) }));
-    const avg = sel.hist.map((_, i) => d.cats.reduce((a, c) => a + c.hist[i], 0) / d.cats.length);
+    const cLo = 0, cHi = Math.max(...spendSlice(sel.hist), ...others.map(c => Math.max(...spendSlice(c.hist)))) * 1.08;
+    const catGhosts = others.map(c => ({ d: path(spendSlice(c.hist), W, CH, cLo, cHi) }));
+    const selectedSpend = spendSlice(sel.hist);
+    const avg = selectedSpend.map((_, i) => d.cats.reduce((a, c) => a + spendSlice(c.hist)[i], 0) / d.cats.length);
     const catGrid = [0, .33, .66, 1].map(g => ({ y: (CH - g * CH).toFixed(1) }));
     const catYLabels = [1, .66, .33, 0].map(g => ({ t: this.m(Math.round(cLo + g * (cHi - cLo))) }));
-    const catMonths = d.months.slice(18);
-    const catXLabels = catMonths.filter((_, i) => i % 4 === 0).map(x => ({ t: x.short })).concat([{ t: catMonths[17].short }]);
+    const catMonths = d.months.slice(-spendWindow);
+    const tickEvery = spendWindow <= 6 ? 1 : spendWindow <= 12 ? 3 : 6;
+    const catXLabels = catMonths.filter((_, i) => i % tickEvery === 0).map(x => ({ t: x.short })).concat([{ t: catMonths[catMonths.length - 1].short }]);
 
     // ── cash flow
     const fMax = Math.max(...d.flow.map(f => Math.max(f.i, f.o)));
@@ -1381,13 +1396,13 @@ class Component extends DCLogic {
       },
       onChartLeave: () => this.setState({ hover: null }),
       kpis, budgetRows, budgetAllRows, srBars, srStart, srEnd, runwayRows,
-      spendTotal: this.m(spendTotal), spendPrev: this.m(2384),
+      spendTotal: this.m(spendTotal), spendPrev: this.m(2384), spendRange, spendRanges: [3, 6, 12, 24].map((r, i) => ({ label: r + 'M', go: () => this.setState({ spendRange: r, hover: null }), col: spendRange === r ? '#E8E7E3' : '#5C5E5C', bg: spendRange === r ? '#161817' : 'transparent', bl: i ? '#2A2C2B' : '0' })),
       selCat: sel.name, selCatSpent: this.m(sel.spent),
       selCatSub: this.m(sel.budgeted - sel.spent) + ' left of ' + this.m(sel.budgeted),
       chartOrder: (P.spendingLayout ?? 'chart') === 'chart' ? 1 : 2,
       tableOrder: (P.spendingLayout ?? 'chart') === 'chart' ? 2 : 1,
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
-      catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
+      catMain: path(selectedSpend, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
       sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',

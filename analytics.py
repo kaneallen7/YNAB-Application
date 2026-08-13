@@ -153,7 +153,7 @@ def build_data(txns, accounts, currency="£", today=None, hist_n=18,
     savings_rate = (avg_inc - avg_spend) / avg_inc * 100 if avg_inc else 0
 
     # ---- monthly stacked (last 12, current month flagged month-to-date) ----
-    trend = hist_months[-12:]
+    trend = hist_months[-24:]
     monthly_cat = []
     for m in trend:
         k = _mkey(m)

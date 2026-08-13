@@ -217,7 +217,7 @@ def _template_model(data):
     currency = meta.get("currency", "£")
     for name in data.get("cat_names", []):
         history = [max(0, float(row.get(name, 0))) for row in data.get("monthly_cat", [])]
-        history = _pad_left(history, 18, 0)[-18:]
+        history = _pad_left(history, 24, 0)[-24:]
         budgeted = max(0.0, float(bva.get(name, {}).get("assigned", totals.get(name, {}).get("avg", 0))))
         moved_out = max(0.0, float(bva.get(name, {}).get("moved_out", 0)))
         balance = float(bva.get(name, {}).get("balance", budgeted - history[-1]))

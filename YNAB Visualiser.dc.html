@@ -41,6 +41,7 @@ a:hover{color:#5DBE95}
 .insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
 .sankey-scroll-frame{width:100%;scrollbar-color:#2A2C2B transparent;scrollbar-width:thin}
 .sankey-mobile-scroll-hint{display:none}
+.sankey-mobile-labels{display:none}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
 .insight-sankey-mobile{display:none}
@@ -170,11 +171,14 @@ a:hover{color:#5DBE95}
   .insights-intro>span:last-child{display:block!important;margin-top:9px!important;line-height:1.5!important}
   .insights-grid{display:block!important}
   .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
-  .sankey-scroll-frame{width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-  .sankey-mobile-scroll-hint{display:block;margin-top:7px;font:400 8.5px/1.4 'IBM Plex Mono',monospace;letter-spacing:.06em;color:#5C5E5C}
-  .sankey-scroll-frame .insight-sankey{width:680px;min-width:680px;height:230px!important;display:block!important}
-  .sankey-scroll-frame .insight-sankey.expanded{height:286px!important}
-  .insight-sankey-mobile{display:none!important}
+  .sankey-scroll-frame{display:none!important}
+  .sankey-mobile-scroll-hint{display:none!important}
+  .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
+  .insight-mobile-node span{display:none!important}
+  .sankey-mobile-labels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;margin-top:9px}
+  .sankey-mobile-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border:1px solid #1E201F;background:#0F1110;min-width:0}
+  .sankey-mobile-label>span:first-child{font:400 10px/1.1 'IBM Plex Sans';color:#BDBDB8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sankey-mobile-label>span:last-child{font:400 9px/1 'IBM Plex Mono';color:#7C7E7A;white-space:nowrap}
   .calendar-cell{min-height:42px!important;padding:5px 4px!important}
   .calendar-amount{font-size:8px!important}
   .health-layout{gap:16px!important}
@@ -792,6 +796,9 @@ a:hover{color:#5DBE95}
 <div class="insight-mobile-node" onClick="{{ sankeyMobileHub.open }}" role="button" style="left:{{ sankeyMobileHub.left }}%;top:{{ sankeyMobileHub.top }}%;width:{{ sankeyMobileHub.width }}%;height:{{ sankeyMobileHub.height }}%"><span>{{ sankeyMobileHub.name }}</span><span>{{ sankeyMobileHub.value }}</span></div>
 <sc-for list="{{ sankeyMobileUses }}" as="n" hint-placeholder-count="8"><div class="insight-mobile-node" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 </div>
+<div class="sankey-mobile-labels">
+<sc-for list="{{ sankeyMobileLabels }}" as="n" hint-placeholder-count="12"><div class="sankey-mobile-label" onClick="{{ n.open }}" role="button"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+</div>
 <div class="sankey-hint">{{ sankeyHint }}</div>
 <sc-if value="{{ sankeyHasMore }}" hint-placeholder-val="{{ false }}"><div class="sankey-expand-action" onClick="{{ expandSankey }}">{{ sankeyExpandLabel }}</div></sc-if>
 <sc-if value="{{ sankeyOpen }}" hint-placeholder-val="{{ false }}"><div class="sankey-detail"><div class="sankey-detail-head"><span class="sankey-detail-name">{{ sankeyFocusName }}</span><span class="sankey-detail-close" onClick="{{ closeSankey }}">CLOSE ×</span></div><div class="sankey-detail-meta">{{ sankeyFocusMeta }}</div><div class="sankey-detail-value">{{ sankeyFocusValue }}</div><div class="sankey-detail-note">{{ sankeyFocusNote }}</div></div></sc-if>
@@ -1217,6 +1224,7 @@ class Component extends DCLogic {
     const sankeyMobileLinks = [];
     sankeyMobileSources.forEach(n => sankeyMobileLinks.push({ d: `M ${n.x + n.w / 2} ${n.y + n.h} C ${n.x + n.w / 2} 86, 200 96, 200 102`, w: Math.max(2, n.h * .45), cls: '' }));
     sankeyMobileUses.forEach(n => sankeyMobileLinks.push({ d: `M 200 160 C 200 ${n.y - 18}, ${n.x + n.w / 2} ${n.y - 10}, ${n.x + n.w / 2} ${n.y}`, w: Math.max(2, n.h * .45), cls: n.kind === 'save' ? 'save' : '' }));
+    const sankeyMobileLabels = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal, kind: 'hub' }, ...sankeyDisplayRaw].map(item => ({ name: item.name, value: this.m(Number(item.value || 0)), open: openSankey(item) }));
     const sankeyFocusRaw = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal }, ...sankeyUsesRaw].find(item => item.name === S.sankeyFocus) || null;
     const sankeyFocusValue = sankeyFocusRaw ? Number(sankeyFocusRaw.value || 0) : 0;
     const sankeyFocusName = sankeyFocusRaw?.name || 'Select a flow';
@@ -1371,7 +1379,7 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
-      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
       sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
       sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',

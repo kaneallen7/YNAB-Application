@@ -44,6 +44,9 @@ a:hover{color:#5DBE95}
 .sankey-mobile-labels{display:none}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
+.insight-sankey .insight-node{fill:#3FA37A;stroke:none;opacity:.78}
+.insight-sankey .insight-node-copy{background:transparent;border-color:transparent;padding:0 4px}
+.insight-sankey .insight-node-copy:hover,.insight-sankey .insight-node-copy:focus{background:rgba(63,163,122,.12);border-color:#3FA37A}
 .insight-sankey-mobile{display:none}
 .insight-sankey-mobile svg{display:block;width:100%;height:100%}
 .insight-mobile-node{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:7px 10px;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid #2A2C2B;border-radius:2px;background:#121615;transition:background .18s ease,border-color .18s ease,transform .18s ease}
@@ -174,7 +177,8 @@ a:hover{color:#5DBE95}
   .sankey-scroll-frame{display:none!important}
   .sankey-mobile-scroll-hint{display:none!important}
   .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
-  .insight-mobile-node span{display:none!important}
+  .insight-sankey-mobile .insight-node{fill:#3FA37A;stroke:none;opacity:.78}
+  .insight-mobile-node{display:none!important}
   .sankey-mobile-labels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 10px;margin-top:9px}
   .sankey-mobile-label{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 8px;border:1px solid #1E201F;background:#0F1110;min-width:0}
   .sankey-mobile-label>span:first-child{font:400 10px/1.1 'IBM Plex Sans';color:#BDBDB8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1197,14 +1201,15 @@ class Component extends DCLogic {
       let y = dense ? 12 : 18;
       return items.map(item => {
         const value = Number(item.value || 0), h = Math.max(minH, Math.min(maxH, value * scale));
-        const node = { x, y, w: 170, h, cy: y + h / 2, left: x / 10, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
+        const source = x < 500;
+        const node = { x, y, w: 12, h, cy: y + h / 2, left: source ? 0 : 82, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
         y += h + gap;
         return node;
       });
     };
-    const sankeySources = sankeyLayout(sankeySourcesRaw, 20, sankeyTotal);
+    const sankeySources = sankeyLayout(sankeySourcesRaw, 180, sankeyTotal);
     const sankeyUses = sankeyLayout(sankeyDisplayRaw, 810, sankeyTotal);
-    const sankeyHub = { x: 405, y: 104, w: 190, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
+    const sankeyHub = { x: 500, y: 104, w: 12, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
     const sankeyLinks = [];
     sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
     sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));
@@ -1217,9 +1222,9 @@ class Component extends DCLogic {
       width: w / 400 * 100, height: h / sankeyMobileHeight * 100,
       name: item.name, value: this.m(Number(item.value || 0)), kind: item.kind || 'spend', open: openSankey(item)
     });
-    const sankeyMobileSources = sankeySourcesRaw.map((item, i) => mobileNode(item, mobileSourceGap + i * (mobileBoxW + mobileSourceGap), 18, mobileBoxW, 52));
-    const sankeyMobileHub = mobileNode(sankeyData.hub || { name: 'Money in', value: sankeyTotal }, 100, 102, 200, 58);
-    const mobileUseW = 180, mobileUseXs = [10, 210];
+    const sankeyMobileSources = sankeySourcesRaw.map((item, i) => mobileNode(item, 96 + i * 200, 18, 8, 52));
+    const sankeyMobileHub = mobileNode(sankeyData.hub || { name: 'Money in', value: sankeyTotal }, 196, 102, 8, 58);
+    const mobileUseW = 8, mobileUseXs = [96, 296];
     const sankeyMobileUses = sankeyDisplayRaw.map((item, i) => mobileNode(item, mobileUseXs[i % 2], 190 + Math.floor(i / 2) * 68, mobileUseW, 52));
     const sankeyMobileLinks = [];
     sankeyMobileSources.forEach(n => sankeyMobileLinks.push({ d: `M ${n.x + n.w / 2} ${n.y + n.h} C ${n.x + n.w / 2} 86, 200 96, 200 102`, w: Math.max(2, n.h * .45), cls: '' }));

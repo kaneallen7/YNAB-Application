@@ -45,7 +45,7 @@ a:hover{color:#5DBE95}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
 .insight-sankey .insight-node{fill:#3FA37A;stroke:none;opacity:.78}
-.insight-sankey .insight-node-copy{background:transparent;border-color:transparent;padding:0 4px}
+.insight-sankey .insight-node-copy{background:transparent;border-color:transparent;padding:0 4px;overflow:visible;border-radius:0}
 .insight-sankey .insight-node-copy:hover,.insight-sankey .insight-node-copy:focus{background:rgba(63,163,122,.12);border-color:#3FA37A}
 .insight-sankey-mobile{display:none}
 .insight-sankey-mobile svg{display:block;width:100%;height:100%}
@@ -56,9 +56,9 @@ a:hover{color:#5DBE95}
 .insight-mobile-link{fill:none;stroke:#3FA37A;stroke-linecap:round;opacity:.36;transition:opacity .26s ease,stroke-width .26s ease}
 .insight-mobile-link.save{stroke:#8F9C7A;opacity:.5}
 .insight-node{fill:#121615;stroke:#2A2C2B;stroke-width:1}
-.insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid transparent;border-radius:2px;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.insight-node-copy{position:absolute;display:flex;flex-direction:column;justify-content:center;padding:0 10px;overflow:visible;pointer-events:auto;cursor:pointer;border:1px solid transparent;border-radius:0;transition:background .18s ease,border-color .18s ease,transform .18s ease}
 .insight-node-copy:hover,.insight-node-copy:focus{background:#1A211E;border-color:#3FA37A;outline:none;transform:translateY(-1px)}
-.insight-node-copy span:first-child{font:400 11px/1.1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.insight-node-copy span:first-child{font:400 11px/1.1 'IBM Plex Sans';color:#D2D1CD;white-space:nowrap;overflow:visible;text-overflow:clip}
 .insight-node-copy span:last-child{margin-top:5px;font:400 9px/1 'IBM Plex Mono';color:#6E706D;white-space:nowrap}
 .insight-node-label{font:400 11px 'IBM Plex Sans';fill:#D2D1CD}
 .insight-node-value{font:400 9px 'IBM Plex Mono';fill:#6E706D}
@@ -779,22 +779,22 @@ a:hover{color:#5DBE95}
 <div class="insight-sankey {{ sankeyExpandedClass }}" style="height:{{ sankeyDesktopHeight }}px">
 <svg viewBox="0 0 1000 {{ sankeyDesktopHeight }}" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
 <sc-for list="{{ sankeyLinks }}" as="l" hint-placeholder-count="8"><path class="{{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
-<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
-<rect class="insight-node" x="{{ sankeyHub.x }}" y="{{ sankeyHub.y }}" width="{{ sankeyHub.w }}" height="{{ sankeyHub.h }}" rx="2"></rect>
-<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="0"></rect></sc-for>
+<rect class="insight-node" x="{{ sankeyHub.x }}" y="{{ sankeyHub.y }}" width="{{ sankeyHub.w }}" height="{{ sankeyHub.h }}" rx="0"></rect>
+<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="0"></rect></sc-for>
 </svg>
-<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
-<div class="insight-node-copy" onClick="{{ sankeyHub.open }}" role="button" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.top }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.height }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
-<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.labelTop }}%;width:{{ n.width }}%;height:{{ n.labelHeight }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
+<div class="insight-node-copy" onClick="{{ sankeyHub.open }}" role="button" style="left:{{ sankeyHub.left }}%;top:{{ sankeyHub.labelTop }}%;width:{{ sankeyHub.width }}%;height:{{ sankeyHub.labelHeight }}%"><span>{{ sankeyHub.name }}</span><span>{{ sankeyHub.value }}</span></div>
+<sc-for list="{{ sankeyUses }}" as="n" hint-placeholder-count="8"><div class="insight-node-copy" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.labelTop }}%;width:{{ n.width }}%;height:{{ n.labelHeight }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 </div>
 </div>
 <div class="sankey-mobile-scroll-hint">SWIPE TO VIEW THE FULL FLOW</div>
 <div class="insight-sankey-mobile {{ sankeyExpandedClass }}" style="height:{{ sankeyMobileHeight }}px">
 <svg viewBox="0 0 400 {{ sankeyMobileHeight }}" preserveAspectRatio="none" role="img" aria-label="Vertical money flow Sankey diagram">
 <sc-for list="{{ sankeyMobileLinks }}" as="l" hint-placeholder-count="12"><path class="insight-mobile-link {{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
-<sc-for list="{{ sankeyMobileSources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
-<rect class="insight-node" x="{{ sankeyMobileHub.x }}" y="{{ sankeyMobileHub.y }}" width="{{ sankeyMobileHub.w }}" height="{{ sankeyMobileHub.h }}" rx="2"></rect>
-<sc-for list="{{ sankeyMobileUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
+<sc-for list="{{ sankeyMobileSources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="0"></rect></sc-for>
+<rect class="insight-node" x="{{ sankeyMobileHub.x }}" y="{{ sankeyMobileHub.y }}" width="{{ sankeyMobileHub.w }}" height="{{ sankeyMobileHub.h }}" rx="0"></rect>
+<sc-for list="{{ sankeyMobileUses }}" as="n" hint-placeholder-count="8"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="0"></rect></sc-for>
 </svg>
 <sc-for list="{{ sankeyMobileSources }}" as="n" hint-placeholder-count="4"><div class="insight-mobile-node" onClick="{{ n.open }}" role="button" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span>{{ n.name }}</span><span>{{ n.value }}</span></div></sc-for>
 <div class="insight-mobile-node" onClick="{{ sankeyMobileHub.open }}" role="button" style="left:{{ sankeyMobileHub.left }}%;top:{{ sankeyMobileHub.top }}%;width:{{ sankeyMobileHub.width }}%;height:{{ sankeyMobileHub.height }}%"><span>{{ sankeyMobileHub.name }}</span><span>{{ sankeyMobileHub.value }}</span></div>
@@ -1194,9 +1194,9 @@ class Component extends DCLogic {
     const openSankey = item => () => this.setState({ sankeyOpen: true, sankeyFocus: item.name });
     const expandSankey = () => this.setState({ sankeyOpen: true });
     const closeSankey = () => this.setState({ sankeyOpen: false, sankeyFocus: null });
-    const sankeyDesktopHeight = sankeyExpanded ? Math.max(420, 90 + sankeyDisplayRaw.length * 42) : Math.max(320, 90 + sankeyDisplayRaw.length * 42);
+    const sankeyDesktopHeight = sankeyExpanded ? Math.max(450, 110 + sankeyDisplayRaw.length * 46) : Math.max(360, 110 + sankeyDisplayRaw.length * 46);
     const sankeyLayout = (items, x, total, canvasHeight) => {
-      const dense = items.length > 6, gap = dense ? 9 : 16, topPad = dense ? 24 : 34;
+      const dense = items.length > 6, gap = dense ? 14 : 18, topPad = dense ? 26 : 38;
       const usable = canvasHeight - topPad - 24;
       const minH = dense ? 22 : 28, maxH = dense ? 44 : 104;
       const scale = total > 0 ? Math.min(0.9, usable / total) : 0;
@@ -1204,7 +1204,8 @@ class Component extends DCLogic {
       return items.map(item => {
         const value = Number(item.value || 0), h = Math.max(minH, Math.min(maxH, value * scale));
         const source = x < 500;
-        const node = { x, y, w: 12, h, cy: y + h / 2, left: source ? 0 : 82, top: y / canvasHeight * 100, width: 17, height: h / canvasHeight * 100, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
+        const labelHeight = Math.min(42, canvasHeight - 8), labelTop = Math.max(4, Math.min(96 - labelHeight / canvasHeight * 100, (y + h / 2 - labelHeight / 2) / canvasHeight * 100));
+        const node = { x, y, w: 14, h, cy: y + h / 2, left: source ? 0 : 82, top: y / canvasHeight * 100, width: 17, height: h / canvasHeight * 100, labelTop, labelHeight: labelHeight / canvasHeight * 100, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
         y += h + gap;
         return node;
       });
@@ -1212,7 +1213,8 @@ class Component extends DCLogic {
     const sankeySources = sankeyLayout(sankeySourcesRaw, 180, sankeyTotal, sankeyDesktopHeight);
     const sankeyUses = sankeyLayout(sankeyDisplayRaw, 810, sankeyTotal, sankeyDesktopHeight);
     const sankeyHubY = sankeyDesktopHeight / 2 - 30;
-    const sankeyHub = { x: 500, y: sankeyHubY, w: 12, h: 60, cy: sankeyHubY + 30, left: 40.5, top: sankeyHubY / sankeyDesktopHeight * 100, width: 19, height: 60 / sankeyDesktopHeight * 100, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
+    const sankeyHubLabelHeight = 34;
+    const sankeyHub = { x: 500, y: sankeyHubY, w: 14, h: 60, cy: sankeyHubY + 30, left: 40.5, top: sankeyHubY / sankeyDesktopHeight * 100, labelTop: Math.max(4, (sankeyHubY - 38) / sankeyDesktopHeight * 100), labelHeight: sankeyHubLabelHeight / sankeyDesktopHeight * 100, width: 19, height: 60 / sankeyDesktopHeight * 100, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
     const sankeyLinks = [];
     sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
     sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));

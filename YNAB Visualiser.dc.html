@@ -565,7 +565,7 @@ a:hover{color:#5DBE95}
 <span style="font:400 13px/1 'IBM Plex Sans'">{{ selCat }} · 18 months</span>
 <span style="font:400 9.5px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#5C5E5C">SELECTED SERIES IN ACCENT · OTHERS NEUTRAL</span>
 </div>
-<div class="spending-range-title"><span>{{ selCat }} Â· {{ spendRange }} months</span><div class="spending-range-controls" aria-label="Spending chart range"><sc-for list="{{ spendRanges }}" as="r" hint-placeholder-count="4"><div role="button" onClick="{{ r.go }}" style="color:{{ r.col }};background:{{ r.bg }};border-left:1px solid {{ r.bl }}">{{ r.label }}</div></sc-for></div></div>
+<div class="spending-range-title"><span>{{ selCat }} &middot; {{ spendRange }} months</span><div class="spending-range-controls" aria-label="Spending chart range"><sc-for list="{{ spendRanges }}" as="r" hint-placeholder-count="4"><div role="button" onClick="{{ r.go }}" style="color:{{ r.col }};background:{{ r.bg }};border-left:1px solid {{ r.bl }}">{{ r.label }}</div></sc-for></div></div>
 <div style="display:flex;margin-top:16px">
 <div class="spending-y-axis" style="width:64px;flex:none;display:flex;flex-direction:column;justify-content:space-between;height:210px">
 <sc-for list="{{ catYLabels }}" as="l" hint-placeholder-count="4">

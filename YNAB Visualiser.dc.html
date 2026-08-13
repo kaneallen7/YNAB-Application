@@ -824,8 +824,7 @@ a:hover{color:#5DBE95}
 <sc-for list="{{ sankey3bBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
 <sc-for list="{{ sankey3bLabels }}" as="n" hint-placeholder-count="16"><text class="sankey-3b-value" text-anchor="{{ n.anchor }}" x="{{ n.valueX }}" y="{{ n.valueY }}">{{ n.value }}</text><text class="sankey-3b-name" text-anchor="{{ n.anchor }}" x="{{ n.nameX }}" y="{{ n.nameY }}">{{ n.name }}</text></sc-for>
 </svg>
-<sc-for list="{{ sankey3bLabelOverlays }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-label" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%;text-align:{{ n.align }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></div></sc-for>
-<sc-for list="{{ sankey3bHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+<sc-for list="{{ sankey3bHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"></div></sc-for>
 </div>
 <div class="sankey-3b-shell sankey-3b-mobile">
 <svg viewBox="0 0 390 320" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram for mobile">
@@ -833,8 +832,7 @@ a:hover{color:#5DBE95}
 <sc-for list="{{ sankey3bMobileBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
 <sc-for list="{{ sankey3bMobileLabels }}" as="n" hint-placeholder-count="16"><text class="sankey-3b-value" text-anchor="{{ n.anchor }}" x="{{ n.valueX }}" y="{{ n.valueY }}" style="font-size:13px">{{ n.value }}</text><text class="sankey-3b-name" text-anchor="{{ n.anchor }}" x="{{ n.nameX }}" y="{{ n.nameY }}" style="font-size:7px">{{ n.name }}</text></sc-for>
 </svg>
-<sc-for list="{{ sankey3bMobileLabelOverlays }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-label" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%;text-align:{{ n.align }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></div></sc-for>
-<sc-for list="{{ sankey3bMobileHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+<sc-for list="{{ sankey3bMobileHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"></div></sc-for>
 </div>
 <div class="sankey-scroll-frame">
 <div class="insight-sankey {{ sankeyExpandedClass }}" style="height:{{ sankeyDesktopHeight }}px">

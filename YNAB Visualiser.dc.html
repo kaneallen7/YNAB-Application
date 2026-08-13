@@ -776,8 +776,8 @@ a:hover{color:#5DBE95}
 <div class="insight-card insight-card-wide">
 <div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
 <div class="sankey-scroll-frame">
-<div class="insight-sankey {{ sankeyExpandedClass }}">
-<svg viewBox="0 0 1000 250" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
+<div class="insight-sankey {{ sankeyExpandedClass }}" style="height:{{ sankeyDesktopHeight }}px">
+<svg viewBox="0 0 1000 {{ sankeyDesktopHeight }}" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
 <sc-for list="{{ sankeyLinks }}" as="l" hint-placeholder-count="8"><path class="{{ l.cls }}" d="{{ l.d }}" stroke-width="{{ l.w }}"></path></sc-for>
 <sc-for list="{{ sankeySources }}" as="n" hint-placeholder-count="4"><rect class="insight-node" x="{{ n.x }}" y="{{ n.y }}" width="{{ n.w }}" height="{{ n.h }}" rx="2"></rect></sc-for>
 <rect class="insight-node" x="{{ sankeyHub.x }}" y="{{ sankeyHub.y }}" width="{{ sankeyHub.w }}" height="{{ sankeyHub.h }}" rx="2"></rect>
@@ -1194,22 +1194,25 @@ class Component extends DCLogic {
     const openSankey = item => () => this.setState({ sankeyOpen: true, sankeyFocus: item.name });
     const expandSankey = () => this.setState({ sankeyOpen: true });
     const closeSankey = () => this.setState({ sankeyOpen: false, sankeyFocus: null });
-    const sankeyLayout = (items, x, total) => {
-      const dense = items.length > 6, gap = dense ? 1 : 12, usable = dense ? 215 : 190;
-      const minH = dense ? 19 : 24, maxH = dense ? 32 : 92;
+    const sankeyDesktopHeight = sankeyExpanded ? Math.max(420, 90 + sankeyDisplayRaw.length * 42) : Math.max(320, 90 + sankeyDisplayRaw.length * 42);
+    const sankeyLayout = (items, x, total, canvasHeight) => {
+      const dense = items.length > 6, gap = dense ? 9 : 16, topPad = dense ? 24 : 34;
+      const usable = canvasHeight - topPad - 24;
+      const minH = dense ? 22 : 28, maxH = dense ? 44 : 104;
       const scale = total > 0 ? Math.min(0.9, usable / total) : 0;
-      let y = dense ? 12 : 18;
+      let y = topPad;
       return items.map(item => {
         const value = Number(item.value || 0), h = Math.max(minH, Math.min(maxH, value * scale));
         const source = x < 500;
-        const node = { x, y, w: 12, h, cy: y + h / 2, left: source ? 0 : 82, top: y / 2.5, width: 17, height: h / 2.5, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
+        const node = { x, y, w: 12, h, cy: y + h / 2, left: source ? 0 : 82, top: y / canvasHeight * 100, width: 17, height: h / canvasHeight * 100, name: item.name, value: this.m(value), kind: item.kind || 'spend', open: openSankey(item) };
         y += h + gap;
         return node;
       });
     };
-    const sankeySources = sankeyLayout(sankeySourcesRaw, 180, sankeyTotal);
-    const sankeyUses = sankeyLayout(sankeyDisplayRaw, 810, sankeyTotal);
-    const sankeyHub = { x: 500, y: 104, w: 12, h: 58, cy: 133, left: 40.5, top: 41.6, width: 19, height: 23.2, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
+    const sankeySources = sankeyLayout(sankeySourcesRaw, 180, sankeyTotal, sankeyDesktopHeight);
+    const sankeyUses = sankeyLayout(sankeyDisplayRaw, 810, sankeyTotal, sankeyDesktopHeight);
+    const sankeyHubY = sankeyDesktopHeight / 2 - 30;
+    const sankeyHub = { x: 500, y: sankeyHubY, w: 12, h: 60, cy: sankeyHubY + 30, left: 40.5, top: sankeyHubY / sankeyDesktopHeight * 100, width: 19, height: 60 / sankeyDesktopHeight * 100, name: sankeyData.hub?.name || 'Money in', value: this.m(sankeyTotal), open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
     const sankeyLinks = [];
     sankeySources.forEach(n => sankeyLinks.push({ d: `M ${n.x + n.w} ${n.cy} C 300 ${n.cy}, 330 ${sankeyHub.cy}, ${sankeyHub.x} ${sankeyHub.cy}`, w: Math.max(2, n.h * .52), cls: 'insight-link' }));
     sankeyUses.forEach(n => sankeyLinks.push({ d: `M ${sankeyHub.x + sankeyHub.w} ${sankeyHub.cy} C 670 ${sankeyHub.cy}, 710 ${n.cy}, ${n.x} ${n.cy}`, w: Math.max(2, n.h * .52), cls: n.kind === 'save' ? 'insight-link save' : 'insight-link' }));
@@ -1384,7 +1387,7 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(sel.hist, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
-      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
       sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
       sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',

@@ -45,9 +45,38 @@ a:hover{color:#5DBE95}
 .insight-card-title{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
 .insight-card-title>span:first-child{font:400 13px/1 'IBM Plex Sans';color:#E8E7E3}
 .insight-card-title>span:last-child{font:400 9px/1.3 'IBM Plex Mono',monospace;letter-spacing:.07em;color:#5C5E5C;text-align:right}
-.sankey-scroll-frame{width:100%;scrollbar-color:#2A2C2B transparent;scrollbar-width:thin}
+.sankey-scroll-frame{display:none!important;width:100%;scrollbar-color:#2A2C2B transparent;scrollbar-width:thin}
 .sankey-mobile-scroll-hint{display:none}
 .sankey-mobile-labels{display:none}
+.sankey-3b-shell{margin-top:18px;width:100%;height:380px;border:1px solid #1E201F;background:#0A0B0A;position:relative;overflow:hidden}
+.sankey-3b-shell svg{display:block;width:100%;height:100%;font-family:'IBM Plex Mono',monospace}
+.sankey-3b-link{fill:#6FAE8E;fill-opacity:.5}
+.sankey-3b-link.save{fill:#8FC9A9;fill-opacity:.55}
+.sankey-3b-bar{fill:#8FC9A9;fill-opacity:.95}
+.sankey-3b-bar.save{fill:#A6D4B8}
+.sankey-3b-value{fill:rgba(255,255,255,.92);font:500 17px 'IBM Plex Mono',monospace}
+.sankey-3b-name{fill:rgba(255,255,255,.44);font:400 9px 'IBM Plex Mono',monospace;letter-spacing:.08em}
+.sankey-3b-label{position:absolute;display:flex;flex-direction:column;justify-content:center;pointer-events:none;line-height:1.1;white-space:nowrap}
+.sankey-3b-label span:first-child{font:500 17px/1.05 'IBM Plex Mono',monospace;color:rgba(255,255,255,.92)}
+.sankey-3b-label span:last-child{margin-top:5px;font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:rgba(255,255,255,.44);overflow:hidden;text-overflow:ellipsis}
+.sankey-3b-mobile .sankey-3b-label span:first-child{font-size:13px}
+.sankey-3b-mobile .sankey-3b-label span:last-child{font-size:7px;margin-top:3px}
+.sankey-3b-hit{position:absolute;cursor:pointer;background:transparent;border:1px solid transparent;transition:border-color .18s ease,background .18s ease}
+.sankey-3b-hit:hover,.sankey-3b-hit:focus{border-color:#3FA37A;background:rgba(63,163,122,.08);outline:none}
+.sankey-3b-hit-label{position:absolute;display:flex;flex-direction:column;gap:5px;line-height:1.05;pointer-events:none;white-space:nowrap;text-align:left}
+.sankey-3b-hit-label span:first-child{font:500 17px/1.05 'IBM Plex Mono',monospace;color:#F2F3F0}
+.sankey-3b-hit-label span:last-child{font:400 9px/1 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#9B9F9A;overflow:hidden;text-overflow:ellipsis}
+.sankey-3b-hit-label.source{left:2%;top:50%;transform:translateY(-50%)}
+.sankey-3b-hit-label.destination{left:18%;top:50%;transform:translateY(-50%)}
+.sankey-3b-hit-label.hub{left:-135%;top:-42px;width:370%;text-align:center}
+.sankey-3b-hit-label.hub span:last-child{color:#9B9F9A}
+.sankey-3b-mobile .sankey-3b-hit-label{gap:3px}
+.sankey-3b-mobile .sankey-3b-hit-label span:first-child{font-size:13px}
+.sankey-3b-mobile .sankey-3b-hit-label span:last-child{font-size:7px}
+.sankey-3b-mobile .sankey-3b-hit-label.source{left:2%}
+.sankey-3b-mobile .sankey-3b-hit-label.destination{left:14%}
+.sankey-3b-mobile .sankey-3b-hit-label.hub{left:-120%;top:-28px;width:340%}
+.sankey-3b-mobile{display:none}
 .insight-sankey{margin-top:18px;width:100%;height:286px;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .26s ease,border-color .2s ease}
 .insight-sankey svg{display:block;width:100%;height:100%}
 .insight-sankey .insight-node{fill:#3FA37A;stroke:none;opacity:.78}
@@ -185,6 +214,8 @@ a:hover{color:#5DBE95}
   .insight-card,.insight-card:nth-child(odd){padding:18px 0 20px!important;border-right:0!important}
   .sankey-scroll-frame{display:none!important}
   .sankey-mobile-scroll-hint{display:none!important}
+  .sankey-3b-desktop{display:none!important}
+  .sankey-3b-mobile{display:block!important;height:290px!important}
   .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
   .insight-sankey-mobile .insight-node{fill:#3FA37A;stroke:none;opacity:.78}
   .insight-mobile-node{display:none!important}
@@ -785,6 +816,24 @@ a:hover{color:#5DBE95}
 
 <div class="insight-card insight-card-wide">
 <div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
+<div class="sankey-3b-shell sankey-3b-desktop" style="height:{{ sankey3bHeight }}px">
+<svg viewBox="0 0 780 {{ sankey3bHeight }}" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
+<sc-for list="{{ sankey3bLinks }}" as="l" hint-placeholder-count="12"><path class="sankey-3b-link {{ l.cls }}" d="{{ l.d }}"></path></sc-for>
+<sc-for list="{{ sankey3bBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
+<sc-for list="{{ sankey3bLabels }}" as="n" hint-placeholder-count="16"><text class="sankey-3b-value" text-anchor="{{ n.anchor }}" x="{{ n.valueX }}" y="{{ n.valueY }}">{{ n.value }}</text><text class="sankey-3b-name" text-anchor="{{ n.anchor }}" x="{{ n.nameX }}" y="{{ n.nameY }}">{{ n.name }}</text></sc-for>
+</svg>
+<sc-for list="{{ sankey3bLabelOverlays }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-label" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%;text-align:{{ n.align }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></div></sc-for>
+<sc-for list="{{ sankey3bHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+</div>
+<div class="sankey-3b-shell sankey-3b-mobile">
+<svg viewBox="0 0 390 320" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram for mobile">
+<sc-for list="{{ sankey3bMobileLinks }}" as="l" hint-placeholder-count="12"><path class="sankey-3b-link {{ l.cls }}" d="{{ l.d }}"></path></sc-for>
+<sc-for list="{{ sankey3bMobileBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
+<sc-for list="{{ sankey3bMobileLabels }}" as="n" hint-placeholder-count="16"><text class="sankey-3b-value" text-anchor="{{ n.anchor }}" x="{{ n.valueX }}" y="{{ n.valueY }}" style="font-size:13px">{{ n.value }}</text><text class="sankey-3b-name" text-anchor="{{ n.anchor }}" x="{{ n.nameX }}" y="{{ n.nameY }}" style="font-size:7px">{{ n.name }}</text></sc-for>
+</svg>
+<sc-for list="{{ sankey3bMobileLabelOverlays }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-label" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%;text-align:{{ n.align }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></div></sc-for>
+<sc-for list="{{ sankey3bMobileHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+</div>
 <div class="sankey-scroll-frame">
 <div class="insight-sankey {{ sankeyExpandedClass }}" style="height:{{ sankeyDesktopHeight }}px">
 <svg viewBox="0 0 1000 {{ sankeyDesktopHeight }}" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
@@ -1250,6 +1299,32 @@ class Component extends DCLogic {
     sankeyMobileSources.forEach(n => sankeyMobileLinks.push({ d: `M ${n.x + n.w / 2} ${n.y + n.h} C ${n.x + n.w / 2} 86, 200 96, 200 102`, w: Math.max(2, n.h * .45), cls: '' }));
     sankeyMobileUses.forEach(n => sankeyMobileLinks.push({ d: `M 200 160 C 200 ${n.y - 18}, ${n.x + n.w / 2} ${n.y - 10}, ${n.x + n.w / 2} ${n.y}`, w: Math.max(2, n.h * .45), cls: n.kind === 'save' ? 'save' : '' }));
     const sankeyMobileLabels = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal, kind: 'hub' }, ...sankeyDisplayRaw].map(item => ({ name: item.name, value: this.m(Number(item.value || 0)), open: openSankey(item) }));
+    const sankey3bHeight = sankeyExpanded ? Math.max(520, 100 + sankeyDisplayRaw.length * 54) : 380;
+    const threeBRows = (items, top, bottom, maxH) => {
+      const gap = items.length > 4 ? 12 : 18, available = bottom - top - gap * Math.max(0, items.length - 1), total = items.reduce((sum, item) => sum + Number(item.value || 0), 0);
+      const scale = total > 0 ? Math.min(maxH / Math.max(1, Math.max(...items.map(item => Number(item.value || 0)))), available / total) : 0;
+      let y = top;
+      return items.map(item => { const value = Number(item.value || 0), h = Math.max(18, Math.min(maxH, value * scale)), node = { ...item, x: 0, y, h, cy: y + h / 2, value: this.m(value), cls: item.kind === 'save' ? 'save' : '', open: openSankey(item) }; y += h + gap; return node; });
+    };
+    const threeBSources = threeBRows(sankeySourcesRaw, 42, sankey3bHeight - 46, 178);
+    const threeBUses = threeBRows(sankeyDisplayRaw, 24, sankey3bHeight - 28, 104);
+    const threeBHubH = Math.max(82, Math.min(300, Math.max(threeBSources.reduce((s, n) => s + n.h, 0), threeBUses.reduce((s, n) => s + n.h, 0))));
+    const threeBHubY = (sankey3bHeight - threeBHubH) / 2, threeBHub = { x: 428, y: threeBHubY, h: threeBHubH, cy: threeBHubY + threeBHubH / 2, value: this.m(sankeyTotal), name: sankeyData.hub?.name || 'Money in', open: openSankey({ name: sankeyData.hub?.name || 'Money in' }) };
+    const threeBLinks = [], threeBBars = [{ x: 428, y: threeBHubY, w: 5, h: threeBHubH, cls: '' }], threeBLabels = [], threeBHits = [];
+    let sourceHubY = threeBHubY;
+    threeBSources.forEach((n, i) => { n.x = 170; threeBLinks.push({ d: `M 174 ${n.cy - n.h / 2} C 300 ${n.cy - n.h / 2}, 300 ${sourceHubY}, 428 ${sourceHubY} L 428 ${sourceHubY + n.h} C 300 ${n.cy + n.h / 2}, 300 ${n.cy + n.h / 2}, 174 ${n.cy + n.h / 2} Z`, cls: '' }); threeBBars.push({ x: 169, y: n.y, w: 4, h: n.h, cls: '' }); threeBLabels.push({ name: n.name.toUpperCase(), value: n.value, valueX: 16, valueY: n.cy - 3, nameX: 16, nameY: n.cy + 14, anchor: 'start' }); threeBHits.push({ name: n.name, value: n.value, open: n.open, labelClass: 'source', left: 0, top: Math.max(0, (n.cy - 26) / sankey3bHeight * 100), width: 28, height: Math.min(18, 52 / sankey3bHeight * 100) }); sourceHubY += n.h; });
+    let useHubY = threeBHubY;
+    threeBUses.forEach(n => { n.x = 687; threeBLinks.push({ d: `M 433 ${useHubY} C 562 ${useHubY}, 562 ${n.cy - n.h / 2}, 687 ${n.cy - n.h / 2} L 687 ${n.cy + n.h / 2} C 562 ${n.cy + n.h / 2}, 562 ${useHubY + n.h}, 433 ${useHubY + n.h} Z`, cls: n.cls }); threeBBars.push({ x: 687, y: n.y, w: 4, h: n.h, cls: n.cls }); threeBLabels.push({ name: n.name.toUpperCase(), value: n.value, valueX: 706, valueY: n.cy - 3, nameX: 706, nameY: n.cy + 14, anchor: 'start' }); threeBHits.push({ name: n.name, value: n.value, open: n.open, labelClass: 'destination', left: 86, top: Math.max(0, (n.cy - 26) / sankey3bHeight * 100), width: 14, height: Math.min(18, 52 / sankey3bHeight * 100) }); useHubY += n.h; });
+    threeBLabels.push({ name: threeBHub.name.toUpperCase(), value: threeBHub.value, valueX: 430, valueY: Math.max(24, threeBHubY - 22), nameX: 430, nameY: Math.max(38, threeBHubY - 7), anchor: 'middle' });
+    threeBHits.push({ name: threeBHub.name, value: threeBHub.value, open: threeBHub.open, labelClass: 'hub', left: 48, top: Math.max(0, (threeBHubY - 34) / sankey3bHeight * 100), width: 14, height: Math.min(20, 68 / sankey3bHeight * 100) });
+    const labelOverlay = (n, canvasH, mobile) => { const hub = n.anchor === 'middle', right = !hub && Number(n.valueX) > (mobile ? 260 : 600), left = !hub && !right, width = hub ? (mobile ? 34 : 18) : (right ? (mobile ? 17 : 13) : (mobile ? 28 : 25)), leftPct = hub ? (mobile ? 33 : 41) : (right ? (mobile ? 84 : 90) : 2), topPct = Math.max(2, (Number(n.valueY) - (mobile ? 15 : 21)) / canvasH * 100); return { value: n.value, name: n.name, left: leftPct, top: topPct, width, height: mobile ? 13 : 12, align: right ? 'left' : hub ? 'center' : 'left' }; };
+    const sankey3bLabelOverlays = threeBLabels.map(n => labelOverlay(n, sankey3bHeight, false));
+    const mobileRows = (items, top, bottom, maxH) => threeBRows(items, top, bottom, maxH).map(n => ({ ...n, x: 0 }));
+    const threeBMobileSources = mobileRows(sankeySourcesRaw, 48, 280, 72), threeBMobileUses = mobileRows(sankeyDisplayRaw, 28, 286, 52), threeBMobileHubH = Math.max(66, Math.min(180, Math.max(threeBMobileSources.reduce((s, n) => s + n.h, 0), threeBMobileUses.reduce((s, n) => s + n.h, 0)))), threeBMobileHubY = (320 - threeBMobileHubH) / 2, threeBMobileLinks = [], threeBMobileBars = [{ x: 192, y: threeBMobileHubY, w: 5, h: threeBMobileHubH, cls: '' }], threeBMobileLabels = [], threeBMobileHits = [];
+    let mobileSourceHubY = threeBMobileHubY; threeBMobileSources.forEach(n => { threeBMobileLinks.push({ d: `M 84 ${n.cy - n.h / 2} C 140 ${n.cy - n.h / 2}, 150 ${mobileSourceHubY}, 192 ${mobileSourceHubY} L 192 ${mobileSourceHubY + n.h} C 150 ${n.cy + n.h / 2}, 140 ${n.cy + n.h / 2}, 84 ${n.cy + n.h / 2} Z`, cls: '' }); threeBMobileBars.push({ x: 82, y: n.y, w: 4, h: n.h, cls: '' }); threeBMobileLabels.push({ name: n.name.toUpperCase(), value: n.value, valueX: 8, valueY: n.cy - 2, nameX: 8, nameY: n.cy + 11, anchor: 'start' }); threeBMobileHits.push({ name: n.name, value: n.value, open: n.open, labelClass: 'source', left: 0, top: Math.max(0, (n.cy - 22) / 320 * 100), width: 25, height: 16 }); mobileSourceHubY += n.h; });
+    let mobileUseHubY = threeBMobileHubY; threeBMobileUses.forEach(n => { threeBMobileLinks.push({ d: `M 197 ${mobileUseHubY} C 250 ${mobileUseHubY}, 275 ${n.cy - n.h / 2}, 316 ${n.cy - n.h / 2} L 316 ${n.cy + n.h / 2} C 275 ${n.cy + n.h / 2}, 250 ${mobileUseHubY + n.h}, 197 ${mobileUseHubY + n.h} Z`, cls: n.cls }); threeBMobileBars.push({ x: 316, y: n.y, w: 4, h: n.h, cls: n.cls }); threeBMobileLabels.push({ name: n.name.toUpperCase(), value: n.value, valueX: 330, valueY: n.cy - 2, nameX: 330, nameY: n.cy + 11, anchor: 'start' }); threeBMobileHits.push({ name: n.name, value: n.value, open: n.open, labelClass: 'destination', left: 80, top: Math.max(0, (n.cy - 22) / 320 * 100), width: 20, height: 16 }); mobileUseHubY += n.h; });
+    threeBMobileLabels.push({ name: threeBHub.name.toUpperCase(), value: this.m(sankeyTotal), valueX: 194, valueY: Math.max(26, threeBMobileHubY - 17), nameX: 194, nameY: Math.max(39, threeBMobileHubY - 5), anchor: 'middle' }); threeBMobileHits.push({ name: threeBHub.name, value: threeBHub.value, open: threeBHub.open, labelClass: 'hub', left: 43, top: Math.max(0, (threeBMobileHubY - 28) / 320 * 100), width: 14, height: 20 });
+    const sankey3bMobileLabelOverlays = threeBMobileLabels.map(n => labelOverlay(n, 320, true));
     const sankeyFocusRaw = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal }, ...sankeyUsesRaw].find(item => item.name === S.sankeyFocus) || null;
     const sankeyFocusValue = sankeyFocusRaw ? Number(sankeyFocusRaw.value || 0) : 0;
     const sankeyFocusName = sankeyFocusRaw?.name || 'Select a flow';
@@ -1404,7 +1479,7 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(selectedSpend, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
-      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankey3bHeight, sankey3bLinks: threeBLinks, sankey3bBars: threeBBars, sankey3bLabels: threeBLabels, sankey3bLabelOverlays, sankey3bHits: threeBHits, sankey3bMobileLinks: threeBMobileLinks, sankey3bMobileBars: threeBMobileBars, sankey3bMobileLabels: threeBMobileLabels, sankey3bMobileLabelOverlays: sankey3bMobileLabelOverlays, sankey3bMobileHits: threeBMobileHits, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
       sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
       sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',

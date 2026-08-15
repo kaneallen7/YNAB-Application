@@ -50,6 +50,15 @@ a:hover{color:#5DBE95}
 .sankey-mobile-labels{display:none}
 .sankey-3b-shell{margin-top:18px;width:100%;height:380px;border:1px solid #1E201F;background:#0A0B0A;position:relative;overflow:hidden}
 .sankey-3b-desktop{height:480px!important}
+.sankey-3b-reference{width:700px;max-width:100%;height:100%;box-sizing:border-box;padding:28px 32px;font-family:'IBM Plex Mono',ui-monospace,monospace}
+.sankey-3b-reference-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;white-space:nowrap}
+.sankey-3b-reference-head>span:first-child{font:400 16px/1 'IBM Plex Mono',monospace;color:rgba(255,255,255,.88)}
+.sankey-3b-reference-head>span:last-child{font:400 10.5px/1 'IBM Plex Mono',monospace;letter-spacing:.1em;color:rgba(255,255,255,.4);text-transform:uppercase}
+.sankey-3b-reference-canvas{position:relative;width:100%;height:336px;margin-top:18px}
+.sankey-3b-reference-canvas svg{display:block;width:100%;height:336px;overflow:visible;font-family:'IBM Plex Mono',ui-monospace,monospace}
+.sankey-3b-reference-canvas text{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.sankey-3b-ref-hit{position:absolute;cursor:pointer;background:transparent;border:1px solid transparent;z-index:2}
+.sankey-3b-ref-hit:hover,.sankey-3b-ref-hit:focus{border-color:#3FA37A;background:rgba(63,163,122,.08);outline:none}
 .sankey-3b-shell svg{display:block;width:100%;height:100%;font-family:'IBM Plex Mono',monospace}
 .sankey-3b-link{fill:#6FAE8E;fill-opacity:.5}
 .sankey-3b-link.save{fill:#8FC9A9;fill-opacity:.55}
@@ -218,6 +227,11 @@ a:hover{color:#5DBE95}
   .sankey-mobile-scroll-hint{display:none!important}
   .sankey-3b-desktop{display:none!important}
   .sankey-3b-mobile{display:block!important;height:360px!important}
+  .sankey-3b-reference{padding:20px 16px;width:100%}
+  .sankey-3b-reference-head>span:first-child{font-size:14px}
+  .sankey-3b-reference-head>span:last-child{font-size:8px}
+  .sankey-3b-reference-canvas{height:336px;margin-top:18px}
+  .sankey-3b-reference-canvas svg{height:336px}
   .sankey-mobile-labels{display:none!important}
   .insight-sankey-mobile{display:none!important}
   .insight-sankey-mobile{display:block!important;margin-top:18px;width:100%;border:1px solid #1E201F;background:#0B0D0C;position:relative;overflow:hidden;transition:height .28s ease,border-color .2s ease}
@@ -821,19 +835,65 @@ a:hover{color:#5DBE95}
 
 <div class="insight-card insight-card-wide">
 <div class="insight-card-title"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
-<div class="sankey-3b-shell sankey-3b-desktop" style="height:{{ sankey3bHeight }}px">
-<svg viewBox="0 0 780 {{ sankey3bHeight }}" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram">
-<sc-for list="{{ sankey3bLinks }}" as="l" hint-placeholder-count="12"><path class="sankey-3b-link {{ l.cls }}" d="{{ l.d }}"></path></sc-for>
-<sc-for list="{{ sankey3bBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
+<div class="sankey-3b-shell sankey-3b-desktop">
+<div class="sankey-3b-reference">
+<div class="sankey-3b-reference-head"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
+<div class="sankey-3b-reference-canvas">
+<svg viewBox="0 0 780 380" role="img" aria-label="Money flow Sankey diagram">
+<path d="M170,40 C300,40 300,150 428,150 L428,260 C300,260 300,230 170,230 Z" fill="#6fae8e" fill-opacity="0.5"></path>
+<path d="M170,272 C300,272 300,260 428,260" fill="none" stroke="#6fae8e" stroke-opacity="0.45" stroke-width="1.1"></path>
+<path d="M170,332 C300,332 300,260 428,260" fill="none" stroke="#6fae8e" stroke-opacity="0.45" stroke-width="1.1"></path>
+<path d="M433,150 C562,150 562,20 690,20 L690,85 C562,85 562,164.1 433,164.1 Z" fill="#8fc9a9" fill-opacity="0.42"></path>
+<path d="M433,164.1 C562,164.1 562,100 690,100 L690,160 C562,160 562,178.1 433,178.1 Z" fill="#8fc9a9" fill-opacity="0.42"></path>
+<path d="M433,178.1 C562,178.1 562,175 690,175 L690,225 C562,225 562,190.3 433,190.3 Z" fill="#8fc9a9" fill-opacity="0.4"></path>
+<path d="M433,190.3 C562,190.3 562,240 690,240 L690,380 C562,380 562,260 433,260 Z" fill="#8fc9a9" fill-opacity="0.55"></path>
+<rect x="169" y="40" width="4" height="190" rx="2" fill="#6fae8e"></rect>
+<rect x="169" y="250" width="4" height="45" rx="2" fill="#6fae8e"></rect>
+<rect x="169" y="310" width="4" height="45" rx="2" fill="#6fae8e"></rect>
+<rect x="428" y="150" width="5" height="110" rx="2.5" fill="#a9dcc0"></rect>
+<rect x="687" y="20" width="4" height="65" rx="2" fill="#8fc9a9"></rect>
+<rect x="687" y="100" width="4" height="60" rx="2" fill="#8fc9a9"></rect>
+<rect x="687" y="175" width="4" height="50" rx="2" fill="#8fc9a9"></rect>
+<rect x="687" y="240" width="4" height="140" rx="2" fill="#8fc9a9"></rect>
+<text x="16" y="132" font-size="17" fill="rgba(255,255,255,.92)">{{ sankey3bRefS1Value }}</text>
+<text x="16" y="150" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS1Name }}</text>
+<text x="16" y="269" font-size="12" fill="rgba(255,255,255,.85)">{{ sankey3bRefS2Value }}</text>
+<text x="16" y="283" font-size="8.5" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS2Name }}</text>
+<text x="16" y="329" font-size="12" fill="rgba(255,255,255,.85)">{{ sankey3bRefS3Value }}</text>
+<text x="16" y="343" font-size="8.5" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS3Name }}</text>
+<text x="430" y="120" font-size="17" text-anchor="middle" fill="rgba(255,255,255,.92)">{{ sankey3bRefHubValue }}</text>
+<text x="430" y="136" font-size="9" text-anchor="middle" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefHubName }}</text>
+<text x="706" y="51" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU1Value }}</text>
+<text x="706" y="65" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU1Name }}</text>
+<text x="706" y="129" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU2Value }}</text>
+<text x="706" y="143" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU2Name }}</text>
+<text x="706" y="199" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU3Value }}</text>
+<text x="706" y="213" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU3Name }}</text>
+<text x="706" y="309" font-size="16" fill="rgba(255,255,255,.92)">{{ sankey3bRefU4Value }}</text>
+<text x="706" y="325" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU4Name }}</text>
 </svg>
-<sc-for list="{{ sankey3bHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+<sc-for list="{{ sankey3bReferenceHits }}" as="n" hint-placeholder-count="8"><div class="sankey-3b-ref-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"></div></sc-for>
+</div>
+</div>
 </div>
 <div class="sankey-3b-shell sankey-3b-mobile">
-<svg viewBox="0 0 390 320" preserveAspectRatio="none" role="img" aria-label="Money flow Sankey diagram for mobile">
-<sc-for list="{{ sankey3bMobileLinks }}" as="l" hint-placeholder-count="12"><path class="sankey-3b-link {{ l.cls }}" d="{{ l.d }}"></path></sc-for>
-<sc-for list="{{ sankey3bMobileBars }}" as="b" hint-placeholder-count="16"><rect class="sankey-3b-bar {{ b.cls }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}"></rect></sc-for>
+<div class="sankey-3b-reference">
+<div class="sankey-3b-reference-head"><span>Where the money went</span><span>{{ sankeyPeriod }}</span></div>
+<div class="sankey-3b-reference-canvas">
+<svg viewBox="0 0 780 380" role="img" aria-label="Money flow Sankey diagram for mobile">
+<path d="M170,40 C300,40 300,150 428,150 L428,260 C300,260 300,230 170,230 Z" fill="#6fae8e" fill-opacity="0.5"></path>
+<path d="M170,272 C300,272 300,260 428,260" fill="none" stroke="#6fae8e" stroke-opacity="0.45" stroke-width="1.1"></path>
+<path d="M170,332 C300,332 300,260 428,260" fill="none" stroke="#6fae8e" stroke-opacity="0.45" stroke-width="1.1"></path>
+<path d="M433,150 C562,150 562,20 690,20 L690,85 C562,85 562,164.1 433,164.1 Z" fill="#8fc9a9" fill-opacity="0.42"></path>
+<path d="M433,164.1 C562,164.1 562,100 690,100 L690,160 C562,160 562,178.1 433,178.1 Z" fill="#8fc9a9" fill-opacity="0.42"></path>
+<path d="M433,178.1 C562,178.1 562,175 690,175 L690,225 C562,225 562,190.3 433,190.3 Z" fill="#8fc9a9" fill-opacity="0.4"></path>
+<path d="M433,190.3 C562,190.3 562,240 690,240 L690,380 C562,380 562,260 433,260 Z" fill="#8fc9a9" fill-opacity="0.55"></path>
+<rect x="169" y="40" width="4" height="190" rx="2" fill="#6fae8e"></rect><rect x="169" y="250" width="4" height="45" rx="2" fill="#6fae8e"></rect><rect x="169" y="310" width="4" height="45" rx="2" fill="#6fae8e"></rect><rect x="428" y="150" width="5" height="110" rx="2.5" fill="#a9dcc0"></rect><rect x="687" y="20" width="4" height="65" rx="2" fill="#8fc9a9"></rect><rect x="687" y="100" width="4" height="60" rx="2" fill="#8fc9a9"></rect><rect x="687" y="175" width="4" height="50" rx="2" fill="#8fc9a9"></rect><rect x="687" y="240" width="4" height="140" rx="2" fill="#8fc9a9"></rect>
+<text x="16" y="132" font-size="17" fill="rgba(255,255,255,.92)">{{ sankey3bRefS1Value }}</text><text x="16" y="150" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS1Name }}</text><text x="16" y="269" font-size="12" fill="rgba(255,255,255,.85)">{{ sankey3bRefS2Value }}</text><text x="16" y="283" font-size="8.5" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS2Name }}</text><text x="16" y="329" font-size="12" fill="rgba(255,255,255,.85)">{{ sankey3bRefS3Value }}</text><text x="16" y="343" font-size="8.5" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefS3Name }}</text><text x="430" y="120" font-size="17" text-anchor="middle" fill="rgba(255,255,255,.92)">{{ sankey3bRefHubValue }}</text><text x="430" y="136" font-size="9" text-anchor="middle" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefHubName }}</text><text x="706" y="51" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU1Value }}</text><text x="706" y="65" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU1Name }}</text><text x="706" y="129" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU2Value }}</text><text x="706" y="143" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU2Name }}</text><text x="706" y="199" font-size="13" fill="rgba(255,255,255,.88)">{{ sankey3bRefU3Value }}</text><text x="706" y="213" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU3Name }}</text><text x="706" y="309" font-size="16" fill="rgba(255,255,255,.92)">{{ sankey3bRefU4Value }}</text><text x="706" y="325" font-size="9" letter-spacing="0.08em" fill="rgba(255,255,255,.4)">{{ sankey3bRefU4Name }}</text>
 </svg>
-<sc-for list="{{ sankey3bMobileHits }}" as="n" hint-placeholder-count="16"><div class="sankey-3b-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"><span class="sankey-3b-hit-label {{ n.labelClass }}"><span>{{ n.value }}</span><span>{{ n.name }}</span></span></div></sc-for>
+<sc-for list="{{ sankey3bReferenceHits }}" as="n" hint-placeholder-count="8"><div class="sankey-3b-ref-hit" onClick="{{ n.open }}" role="button" aria-label="{{ n.name }} {{ n.value }}" style="left:{{ n.left }}%;top:{{ n.top }}%;width:{{ n.width }}%;height:{{ n.height }}%"></div></sc-for>
+</div>
+</div>
 </div>
 <div class="sankey-scroll-frame">
 <div class="insight-sankey {{ sankeyExpandedClass }}" style="height:{{ sankeyDesktopHeight }}px">
@@ -1301,6 +1361,30 @@ class Component extends DCLogic {
     sankeyMobileUses.forEach(n => sankeyMobileLinks.push({ d: `M 200 160 C 200 ${n.y - 18}, ${n.x + n.w / 2} ${n.y - 10}, ${n.x + n.w / 2} ${n.y}`, w: Math.max(2, n.h * .45), cls: n.kind === 'save' ? 'save' : '' }));
     const sankeyMobileLabels = [...sankeySourcesRaw, sankeyData.hub || { name: 'Money in', value: sankeyTotal, kind: 'hub' }, ...sankeyDisplayRaw].map(item => ({ name: item.name, value: this.m(Number(item.value || 0)), open: openSankey(item) }));
     const sankey3bHeight = sankeyExpanded ? Math.max(520, 100 + sankeyDisplayRaw.length * 54) : 380;
+    const refSourceItems = [...sankeySourcesRaw, { name: 'Other income', value: 0 }].slice(0, 3);
+    const refUseItems = sankeyDisplayRaw.length > 4 ? [...sankeyDisplayRaw.slice(0, 3), { name: 'Other', value: sankeyDisplayRaw.slice(3).reduce((sum, item) => sum + Number(item.value || 0), 0), kind: 'other' }] : [...sankeyDisplayRaw, { name: 'Other', value: 0, kind: 'other' }].slice(0, 4);
+    while (refSourceItems.length < 3) refSourceItems.push({ name: 'Other income', value: 0 });
+    while (refUseItems.length < 4) refUseItems.push({ name: 'Other', value: 0, kind: 'other' });
+    const refValue = item => this.m(Number(item?.value || 0));
+    const refName = item => String(item?.name || '').toUpperCase();
+    const sankey3bRefS1Value = refValue(refSourceItems[0]), sankey3bRefS1Name = refName(refSourceItems[0]);
+    const sankey3bRefS2Value = refValue(refSourceItems[1]), sankey3bRefS2Name = refName(refSourceItems[1]);
+    const sankey3bRefS3Value = refValue(refSourceItems[2]), sankey3bRefS3Name = refName(refSourceItems[2]);
+    const sankey3bRefHubValue = this.m(sankeyTotal), sankey3bRefHubName = String(sankeyData.hub?.name || 'Money in').toUpperCase();
+    const sankey3bRefU1Value = refValue(refUseItems[0]), sankey3bRefU1Name = refName(refUseItems[0]);
+    const sankey3bRefU2Value = refValue(refUseItems[1]), sankey3bRefU2Name = refName(refUseItems[1]);
+    const sankey3bRefU3Value = refValue(refUseItems[2]), sankey3bRefU3Name = refName(refUseItems[2]);
+    const sankey3bRefU4Value = refValue(refUseItems[3]), sankey3bRefU4Name = refName(refUseItems[3]);
+    const sankey3bReferenceHits = [
+      { name: refSourceItems[0].name, value: sankey3bRefS1Value, open: openSankey(refSourceItems[0]), left: 0, top: 8, width: 28, height: 54 },
+      { name: refSourceItems[1].name, value: sankey3bRefS2Value, open: openSankey(refSourceItems[1]), left: 0, top: 62, width: 28, height: 14 },
+      { name: refSourceItems[2].name, value: sankey3bRefS3Value, open: openSankey(refSourceItems[2]), left: 0, top: 78, width: 28, height: 14 },
+      { name: sankeyData.hub?.name || 'Money in', value: sankey3bRefHubValue, open: openSankey(sankeyData.hub || { name: 'Money in', value: sankeyTotal }), left: 48, top: 30, width: 14, height: 32 },
+      { name: refUseItems[0].name, value: sankey3bRefU1Value, open: openSankey(refUseItems[0]), left: 84, top: 0, width: 16, height: 25 },
+      { name: refUseItems[1].name, value: sankey3bRefU2Value, open: openSankey(refUseItems[1]), left: 84, top: 21, width: 16, height: 25 },
+      { name: refUseItems[2].name, value: sankey3bRefU3Value, open: openSankey(refUseItems[2]), left: 84, top: 42, width: 16, height: 25 },
+      { name: refUseItems[3].name, value: sankey3bRefU4Value, open: openSankey(refUseItems[3]), left: 84, top: 62, width: 16, height: 38 }
+    ];
     const threeBRows = (items, top, bottom, maxH) => {
       const gap = items.length > 4 ? 12 : 18, available = bottom - top - gap * Math.max(0, items.length - 1), total = items.reduce((sum, item) => sum + Number(item.value || 0), 0);
       const scale = total > 0 ? Math.min(maxH / Math.max(1, Math.max(...items.map(item => Number(item.value || 0)))), available / total) : 0;
@@ -1484,7 +1568,7 @@ class Component extends DCLogic {
       catHead, cats, catGhosts, catGrid, catYLabels, catXLabels,
       catMain: path(selectedSpend, W, CH, cLo, cHi), catAvg: path(avg, W, CH, cLo, cHi),
       flowKpis, flowBars, netLine, flowXLabels, flowHead, flowRows,
-      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankey3bHeight, sankey3bLinks: threeBLinks, sankey3bBars: threeBBars, sankey3bLabels: threeBLabels, sankey3bLabelOverlays, sankey3bHits: threeBHits, sankey3bMobileLinks: threeBMobileLinks, sankey3bMobileBars: threeBMobileBars, sankey3bMobileLabels: threeBMobileLabels, sankey3bMobileLabelOverlays: sankey3bMobileLabelOverlays, sankey3bMobileHits: threeBMobileHits, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
+      sankeySources, sankeyUses, sankeyHub, sankeyLinks, sankeyDesktopHeight, sankey3bHeight, sankey3bRefS1Value, sankey3bRefS1Name, sankey3bRefS2Value, sankey3bRefS2Name, sankey3bRefS3Value, sankey3bRefS3Name, sankey3bRefHubValue, sankey3bRefHubName, sankey3bRefU1Value, sankey3bRefU1Name, sankey3bRefU2Value, sankey3bRefU2Name, sankey3bRefU3Value, sankey3bRefU3Name, sankey3bRefU4Value, sankey3bRefU4Name, sankey3bReferenceHits, sankey3bLinks: threeBLinks, sankey3bBars: threeBBars, sankey3bLabels: threeBLabels, sankey3bLabelOverlays, sankey3bHits: threeBHits, sankey3bMobileLinks: threeBMobileLinks, sankey3bMobileBars: threeBMobileBars, sankey3bMobileLabels: threeBMobileLabels, sankey3bMobileLabelOverlays: sankey3bMobileLabelOverlays, sankey3bMobileHits: threeBMobileHits, sankeyMobileSources, sankeyMobileUses, sankeyMobileHub, sankeyMobileLinks, sankeyMobileLabels, sankeyMobileHeight, sankeyPeriod: sankeyData.period || 'TRAILING 12 MONTHS',
       sankeyOpen: Boolean(S.sankeyOpen), sankeyExpandedClass: sankeyExpanded ? 'expanded' : '',
       sankeyHasMore: !sankeyExpanded && sankeyUsesRaw.length > 4, sankeyExpandLabel: 'SHOW ALL FLOWS',
       sankeyHint: sankeyExpanded ? 'TAP A NODE TO INSPECT THE FLOW' : 'TAP A NODE TO EXPAND THE FLOW DETAIL',

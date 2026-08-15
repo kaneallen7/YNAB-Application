@@ -568,6 +568,7 @@
   }
   function walkText(node) {
     const txt = node.nodeValue ?? "";
+    const svgTextParent = /^(text|tspan)$/i.test(node.parentElement?.tagName || "");
     if (!txt.includes("{{")) {
       if (!txt.trim() && !txt.includes(" ")) return null;
       return () => txt;
@@ -604,6 +605,10 @@
           return h(getReact().Fragment, { key: i }, v);
         }
         if (v === null || typeof v === "boolean") return null;
+        // HTML spans are invalid children of SVG text nodes. Keep resolved
+        // interpolations as native text in <text>/<tspan> while retaining the
+        // normal span wrapper for ordinary HTML content.
+        if (svgTextParent) return String(v);
         return h("span", { key: i, className: "sc-interp" }, String(v));
       })
     );

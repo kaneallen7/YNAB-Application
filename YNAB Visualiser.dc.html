@@ -1367,35 +1367,23 @@ class Component extends DCLogic {
     while (refUseItems.length < 4) refUseItems.push({ name: 'Other', value: 0, kind: 'other' });
     const refValue = item => this.m(Number(item?.value || 0));
     const refName = item => String(item?.name || '').toUpperCase();
-    // The DC template runtime normally wraps interpolated text in HTML spans.
-    // SVG <text> cannot paint those spans, so provide native <tspan> children
-    // for the exact standalone labels while keeping plain strings for hit areas.
-    const refSvg = value => React.createElement('tspan', null, value);
-    const sankey3bRefS1ValueRaw = refValue(refSourceItems[0]), sankey3bRefS1NameRaw = refName(refSourceItems[0]);
-    const sankey3bRefS2ValueRaw = refValue(refSourceItems[1]), sankey3bRefS2NameRaw = refName(refSourceItems[1]);
-    const sankey3bRefS3ValueRaw = refValue(refSourceItems[2]), sankey3bRefS3NameRaw = refName(refSourceItems[2]);
-    const sankey3bRefHubValueRaw = this.m(sankeyTotal), sankey3bRefHubNameRaw = String(sankeyData.hub?.name || 'Money in').toUpperCase();
-    const sankey3bRefU1ValueRaw = refValue(refUseItems[0]), sankey3bRefU1NameRaw = refName(refUseItems[0]);
-    const sankey3bRefU2ValueRaw = refValue(refUseItems[1]), sankey3bRefU2NameRaw = refName(refUseItems[1]);
-    const sankey3bRefU3ValueRaw = refValue(refUseItems[2]), sankey3bRefU3NameRaw = refName(refUseItems[2]);
-    const sankey3bRefU4ValueRaw = refValue(refUseItems[3]), sankey3bRefU4NameRaw = refName(refUseItems[3]);
-    const sankey3bRefS1Value = refSvg(sankey3bRefS1ValueRaw), sankey3bRefS1Name = refSvg(sankey3bRefS1NameRaw);
-    const sankey3bRefS2Value = refSvg(sankey3bRefS2ValueRaw), sankey3bRefS2Name = refSvg(sankey3bRefS2NameRaw);
-    const sankey3bRefS3Value = refSvg(sankey3bRefS3ValueRaw), sankey3bRefS3Name = refSvg(sankey3bRefS3NameRaw);
-    const sankey3bRefHubValue = refSvg(sankey3bRefHubValueRaw), sankey3bRefHubName = refSvg(sankey3bRefHubNameRaw);
-    const sankey3bRefU1Value = refSvg(sankey3bRefU1ValueRaw), sankey3bRefU1Name = refSvg(sankey3bRefU1NameRaw);
-    const sankey3bRefU2Value = refSvg(sankey3bRefU2ValueRaw), sankey3bRefU2Name = refSvg(sankey3bRefU2NameRaw);
-    const sankey3bRefU3Value = refSvg(sankey3bRefU3ValueRaw), sankey3bRefU3Name = refSvg(sankey3bRefU3NameRaw);
-    const sankey3bRefU4Value = refSvg(sankey3bRefU4ValueRaw), sankey3bRefU4Name = refSvg(sankey3bRefU4NameRaw);
+    const sankey3bRefS1Value = refValue(refSourceItems[0]), sankey3bRefS1Name = refName(refSourceItems[0]);
+    const sankey3bRefS2Value = refValue(refSourceItems[1]), sankey3bRefS2Name = refName(refSourceItems[1]);
+    const sankey3bRefS3Value = refValue(refSourceItems[2]), sankey3bRefS3Name = refName(refSourceItems[2]);
+    const sankey3bRefHubValue = this.m(sankeyTotal), sankey3bRefHubName = String(sankeyData.hub?.name || 'Money in').toUpperCase();
+    const sankey3bRefU1Value = refValue(refUseItems[0]), sankey3bRefU1Name = refName(refUseItems[0]);
+    const sankey3bRefU2Value = refValue(refUseItems[1]), sankey3bRefU2Name = refName(refUseItems[1]);
+    const sankey3bRefU3Value = refValue(refUseItems[2]), sankey3bRefU3Name = refName(refUseItems[2]);
+    const sankey3bRefU4Value = refValue(refUseItems[3]), sankey3bRefU4Name = refName(refUseItems[3]);
     const sankey3bReferenceHits = [
-      { name: refSourceItems[0].name, value: sankey3bRefS1ValueRaw, open: openSankey(refSourceItems[0]), left: 0, top: 8, width: 28, height: 54 },
-      { name: refSourceItems[1].name, value: sankey3bRefS2ValueRaw, open: openSankey(refSourceItems[1]), left: 0, top: 62, width: 28, height: 14 },
-      { name: refSourceItems[2].name, value: sankey3bRefS3ValueRaw, open: openSankey(refSourceItems[2]), left: 0, top: 78, width: 28, height: 14 },
-      { name: sankeyData.hub?.name || 'Money in', value: sankey3bRefHubValueRaw, open: openSankey(sankeyData.hub || { name: 'Money in', value: sankeyTotal }), left: 48, top: 30, width: 14, height: 32 },
-      { name: refUseItems[0].name, value: sankey3bRefU1ValueRaw, open: openSankey(refUseItems[0]), left: 84, top: 0, width: 16, height: 25 },
-      { name: refUseItems[1].name, value: sankey3bRefU2ValueRaw, open: openSankey(refUseItems[1]), left: 84, top: 21, width: 16, height: 25 },
-      { name: refUseItems[2].name, value: sankey3bRefU3ValueRaw, open: openSankey(refUseItems[2]), left: 84, top: 42, width: 16, height: 25 },
-      { name: refUseItems[3].name, value: sankey3bRefU4ValueRaw, open: openSankey(refUseItems[3]), left: 84, top: 62, width: 16, height: 38 }
+      { name: refSourceItems[0].name, value: sankey3bRefS1Value, open: openSankey(refSourceItems[0]), left: 0, top: 8, width: 28, height: 54 },
+      { name: refSourceItems[1].name, value: sankey3bRefS2Value, open: openSankey(refSourceItems[1]), left: 0, top: 62, width: 28, height: 14 },
+      { name: refSourceItems[2].name, value: sankey3bRefS3Value, open: openSankey(refSourceItems[2]), left: 0, top: 78, width: 28, height: 14 },
+      { name: sankeyData.hub?.name || 'Money in', value: sankey3bRefHubValue, open: openSankey(sankeyData.hub || { name: 'Money in', value: sankeyTotal }), left: 48, top: 30, width: 14, height: 32 },
+      { name: refUseItems[0].name, value: sankey3bRefU1Value, open: openSankey(refUseItems[0]), left: 84, top: 0, width: 16, height: 25 },
+      { name: refUseItems[1].name, value: sankey3bRefU2Value, open: openSankey(refUseItems[1]), left: 84, top: 21, width: 16, height: 25 },
+      { name: refUseItems[2].name, value: sankey3bRefU3Value, open: openSankey(refUseItems[2]), left: 84, top: 42, width: 16, height: 25 },
+      { name: refUseItems[3].name, value: sankey3bRefU4Value, open: openSankey(refUseItems[3]), left: 84, top: 62, width: 16, height: 38 }
     ];
     const threeBRows = (items, top, bottom, maxH) => {
       const gap = items.length > 4 ? 12 : 18, available = bottom - top - gap * Math.max(0, items.length - 1), total = items.reduce((sum, item) => sum + Number(item.value || 0), 0);
